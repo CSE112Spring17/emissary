@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">js/dashboard.js | API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <a data-ice="repoURL" href="https://github.com/thiefjack/WebStormTroopers" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ajaxGetCompanyInfo">ajaxGetCompanyInfo</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ajaxPostUser">ajaxPostUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-grabUserData">grabUserData</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-handleError">handleError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-userState">userState</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-userState">userState</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">js/dashboard.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">var userState = JSON.parse(localStorage.getItem(&quot;userState&quot;));
+  if(!userState){
+    location.href= &quot;login.html&quot;;
+}
+
+$(document).ready(function(){
+
+
+    var socket = io(); //Initialize Socket
+
+    //Socket variables
+    var DEBUG = 1;
+    var VALIDATE_COMPANY_ID = &quot;validate_company_id&quot;;
+    var VISITOR_LIST_UPDATE = &quot;visitor_list_update&quot;;
+    var REMOVE_VISITOR = &quot;remove_visitor&quot;;
+
+    var companyData = JSON.parse(localStorage.getItem(&quot;currentCompany&quot;));
+    var visitorList;
+    companyData.company_id = companyData._id;
+
+
+    //var curCompany = JSON.parse(localStorage.getItem(&apos;currentCompany&apos;));
+    var curUser = JSON.parse(localStorage.getItem(&apos;currentUser&apos;));
+    var companyName = companyData.name;
+
+
+    $(&apos;#user-name&apos;).text(curUser.first_name + &apos; &apos; +  curUser.last_name);
+
+    //Connect to private socket
+    //var companyId = getCookie(&apos;company_id&apos;);
+    socket.emit(VALIDATE_COMPANY_ID, companyData);
+
+   /***
+    * Compile all the Handle Bar Templates
+    */
+    //DashBoard Template
+    var source = $(&quot;#visitor-list-template&quot;).html();
+    var template = Handlebars.compile(source);
+
+    //Modal Template
+    var modal = $(&apos;#visitor-info-template&apos;).html();
+    var modalTemplate = Handlebars.compile(modal);
+
+    //SOCKET LISTEN FOR VISITOR QUEUE
+    socket.on(VISITOR_LIST_UPDATE, function (data) {
+        visitorList = data.visitors
+        //Parse Visitor List to format Date
+        for(var i = 0, len = visitorList.length; i&lt; len; i++){
+            visitorList[i].checkin_time = formatTime(visitorList[i].checkin_time);
+        }
+
+        //Parse Visitors appoitments
+        for(i = 0; i &lt; len; i++){
+          var appList = visitorList[i].appointments;
+          if(appList[0]){
+            for(var j = 0, appLen = appList.length; j &lt; appLen; j++){
+              if(compareDate(appList[j].date)){
+                visitorList[i].appointmentTime = formatTime(appList[j].date);
+                visitorList[i]._apptId = appList[j]._id;
+                break;
+              }
+            }
+          }
+          else{
+      
+            visitorList[i].appointmentTime = &quot;None&quot;;
+          }
+        }
+
+       //visitorList.checkin_time = visitorList;
+        var compiledHtml = template(visitorList);
+        $(&apos;#visitor-list&apos;).html(compiledHtml);
+    });
+
+
+    /***
+    * Listener for Opening a Modal
+    */
+    $(document).on(&apos;click&apos;,&apos;.patient-check-out&apos;,function(){
+        var uniqueId = $(this).attr(&apos;value&apos;);
+        var visitor = findVisitor(uniqueId);
+        var compiledTemplate = modalTemplate(visitor);
+        $(&apos;.modal-dialog&apos;).html(compiledTemplate);
+    });
+
+    /***
+     * Listener for Checking out a Visitor
+     */
+    $(document).on(&apos;click&apos;,&apos;.check-in-btn&apos;,function(){
+        var id = $(this).closest(&apos;.modal-content&apos;).find(&apos;.modal-body&apos;).attr(&apos;value&apos;);
+        var apptId = $(this).closest(&apos;.modal-content&apos;).find(&apos;.modal-left&apos;).attr(&apos;value&apos;);
+
+        var removeVisitor = findVisitor(id);
+   
+        removeVisitor.visitor_id = removeVisitor._id;
+
+        $.ajax({
+          dataType:&apos;json&apos;,
+          type: &apos;DELETE&apos;,
+          url:&apos;/api/appointments/&apos; + apptId,
+          success:function(response){
+          }
+        });
+        
+
+        socket.emit(REMOVE_VISITOR, removeVisitor);
+    });
+/*
+    $(document).on(&apos;click&apos;,&apos;.checkout-btn&apos;,function(){
+        var id = $(this).closest(&apos;.patient-check-out&apos;).attr(&apos;value&apos;);
+        var removeVisitor = findVisitor(id);
+        console.log(removeVisitor);
+        //removeVisitor.visitor_id = removeVisitor._id;
+        //socket.emit(REMOVE_VISITOR, removeVisitor);
+
+    });
+*/
+    /***
+     * Compare appointment Date to today&apos;s Date
+     */
+    function compareDate(appointment){
+      var today = new Date();
+      appointment = new Date(Date.parse(appointment));
+
+      var appointmentDate = appointment.getFullYear() + &apos; &apos; + appointment.getDate() + &apos; &apos; + appointment.getMonth();
+      var todayDate = today.getFullYear() + &apos; &apos; + today.getDate() + &apos; &apos; + today.getMonth();
+
+      return (appointmentDate == todayDate);
+    }
+
+    /***
+     * Find Specific Visitor Given Visitor ID within the Visitor Array
+     * @param id
+     * @returns {string}
+     */
+    function findVisitor(id){
+
+        for(var visitor in visitorList) {
+           if(visitorList.hasOwnProperty(visitor)){
+              if(visitorList[visitor]._id === id){
+                  if(DEBUG) console.log(visitorList[visitor]);
+                  return visitorList[visitor];
+              }
+           }
+        }
+    }
+
+    /***
+     * Function to format a JSON date object into a string
+     * @param time
+     */
+    function formatTime(time){
+        var currentTime = new Date(Date.parse(time));
+        var hour = currentTime.getHours();
+        var minute = currentTime.getMinutes();
+
+        if(minute &lt; 10) {
+            minute = &apos;0&apos; + minute;
+        }
+
+        if(hour &gt;= 13){
+            hour = hour-12;
+            currentTime = hour + &apos;:&apos; + minute + &apos;PM&apos;;
+        }
+
+        else if(hour === 12){
+            currentTime = hour + &apos;:&apos; + minute +&apos;PM&apos;;
+        }
+        else if(hour === 0){
+            currentTime = 1 + &apos;:&apos; + minute + &apos;AM&apos;;
+        }
+        else{
+            currentTime = hour + &apos;:&apos; + minute +&apos;AM&apos;;
+        }
+
+        return currentTime;
+
+    }
+
+    $(&apos;#logoutButton&apos;).on(&apos;click&apos;,function(){
+      localStorage.setItem(&apos;userState&apos;,0);
+    });
+
+
+    /***
+     * TODO order the list by increasing order
+     * @param key
+     */
+    function increasingOrder(key){
+
+    }
+
+    /***
+     * TODO order the list by decreasing order
+     * @param key
+     */
+    function decreasingOrder(key){
+
+    }
+
+});
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

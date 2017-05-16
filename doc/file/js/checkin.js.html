@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">js/checkin.js | API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <a data-ice="repoURL" href="https://github.com/thiefjack/WebStormTroopers" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ajaxGetCompanyInfo">ajaxGetCompanyInfo</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ajaxPostUser">ajaxPostUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-grabUserData">grabUserData</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-handleError">handleError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-userState">userState</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-userState">userState</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">js/checkin.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">$(document).ready(function(){
+
+    var socket = io();
+
+    var VALIDATE_COMPANY_ID = &quot;validate_company_id&quot;;
+    var ADD_VISITOR = &quot;add_visitor&quot;;
+    
+    var companyData = JSON.parse(localStorage.getItem(&quot;currentCompany&quot;));
+    console.log(companyData);
+    socket.emit(VALIDATE_COMPANY_ID, companyData);
+    
+    //Prevent users from scrolling around on iPad
+    document.ontouchmove = function(e) {
+        e.preventDefault();
+    };
+
+    //Bind Listeners
+    $(&apos;#tap-to-check&apos;).on(&apos;click&apos;, startCheckIn);
+    $(&apos;.check-in&apos;).on(&apos;submit&apos;, submitForm);
+
+    //When a user starts their check in
+    function startCheckIn(){
+        $(&apos;.check-in&apos;).addClass(&apos;show&apos;);
+        $(&apos;.check-in&apos;).animate({
+            top:&apos;10%&apos;,
+            opacity: &apos;1&apos;
+        }, 700);
+        $(this).addClass(&apos;hide&apos;);
+        $(&apos;#clock&apos;).addClass(&apos;hide&apos;);
+    }
+
+    //When a patient submits their form
+    function submitForm(){
+        //event.preventDefault();
+        var data = grabFormElements();
+        //console.log(data.company_id);
+        if(localStorage.getItem(&quot;slackToken&quot;)&amp;&amp;localStorage.getItem(&quot;slackChannel&quot;))
+        {
+             $.post(&quot;https://slack.com/api/chat.postMessage&quot;,
+             {
+                &apos;token&apos;: localStorage.getItem(&quot;slackToken&quot;),
+                &apos;channel&apos;: localStorage.getItem(&quot;slackChannel&quot;), 
+                &apos;text&apos;: &quot;Name: &quot; + data[&apos;first_name&apos;] + &quot; &quot; + data[&apos;last_name&apos;] + &quot; Phone Number: &quot; + data[&apos;phone_number&apos;]
+             },
+             function(data, status){
+              });
+        }
+        socket.emit(ADD_VISITOR, data);
+
+        $(this).animate({
+            top:&apos;35%&apos;,
+            opacity:&apos;0&apos;
+        },0);
+
+    }
+    //Grabs elements from the check in and puts it into an object
+    function grabFormElements(){
+        var newVisitor = {};
+        newVisitor.company_id = companyData._id;
+        newVisitor.first_name= $(&apos;#visitor-first&apos;).val();
+        newVisitor.last_name = $(&apos;#visitor-last&apos;).val();
+        newVisitor.phone_number = $(&apos;#visitor-number&apos;).val();
+        newVisitor.checkin_time = new Date();
+        return newVisitor;
+    }
+
+    //CLOCK
+    function updateClock () {
+        var currentTime = new Date ( );
+        var currentHours = currentTime.getHours ( );
+        var currentMinutes = currentTime.getMinutes ( );
+        //var currentSeconds = currentTime.getSeconds ( );
+        // Pad the minutes and seconds with leading zeros, if required
+        currentMinutes = ( currentMinutes &lt; 10 ? &quot;0&quot; : &quot;&quot; ) + currentMinutes;
+        //currentSeconds = ( currentSeconds &lt; 10 ? &quot;0&quot; : &quot;&quot; ) + currentSeconds;
+
+        // Convert the hours component to 12-hour format if needed
+        currentHours = ( currentHours &gt; 12 ) ? currentHours - 12 : currentHours;
+
+        // Convert an hours component of &quot;0&quot; to &quot;12&quot;
+        currentHours = ( currentHours == 0 ) ? 12 : currentHours;
+
+        // Compose the string for display
+        var currentTimeString = currentHours + &quot;:&quot; + currentMinutes;
+
+        $(&quot;#clock&quot;).html(currentTimeString);
+    }
+    updateClock();
+    setInterval(updateClock, 60 * 1000);
+
+    /***
+     * Find a specific cookie name
+     * @param cName
+     * @returns {string|*}
+     */
+    function getCookie(cName) {
+        var name = cName + &apos;=&apos;;
+        var cookieArray = document.cookie.split(&apos;;&apos;);
+
+        for (var i = 0, len = cookieArray.length; i &lt; len; i++) {
+            var cookie = cookieArray[i];
+            while (cookie.charAt(0) == &apos; &apos;)
+                cookie.substring(1);
+            if (cookie.indexOf(name) == 0)
+                return cookie.substring(name.length, cookie.length);
+        }
+
+    }
+
+
+});
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

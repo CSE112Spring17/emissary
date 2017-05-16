@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">js/employees.js | API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <a data-ice="repoURL" href="https://github.com/thiefjack/WebStormTroopers" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ajaxGetCompanyInfo">ajaxGetCompanyInfo</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ajaxPostUser">ajaxPostUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-grabUserData">grabUserData</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-handleError">handleError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-userState">userState</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-userState">userState</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">js/employees.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">$(document).ready(function(){
+    var companyData = JSON.parse(localStorage.getItem(&quot;currentCompany&quot;));
+    var myCompanyId = companyData._id;
+
+    console.log(myCompanyId);
+
+    var curUser = JSON.parse(localStorage.getItem(&apos;currentUser&apos;));
+    $(&apos;#user-name&apos;).text(curUser.first_name + &apos; &apos; +  curUser.last_name);
+
+    var employees = getEmployees();
+    
+    var source = $(&quot;#employee-list-template&quot;).html();
+    var template = Handlebars.compile(source);
+    var compiledHtml = template(employees);
+
+    $(&quot;#employee-list&quot;).html(compiledHtml);
+    $(&apos;.save-btn&apos;).click(submitForm);
+
+    
+   /***
+     * Makes a get request to display list of employees 
+     * @param none
+     * @returns displays the employee list
+     */
+    function getEmployees() {
+       var json;
+       $.ajax({
+           dataType: &apos;json&apos;,
+           type: &apos;GET&apos;,
+           data: $(&apos;#response&apos;).serialize(),
+           async: false,
+           url: &apos;/api/employees/company/&apos; + myCompanyId,
+           success: function(response) {
+               json = response;
+               //console.log(response);
+           }
+       });
+       return json;
+   }
+
+   /***
+     * Makes a post request to update list of employees when adding a new employee
+     * @param none
+     * @returns updates the employee list
+     */
+   function updateEmployeeList(obj) {
+      $.ajax({
+        dataType: &apos;json&apos;,
+           type: &apos;POST&apos;,
+           data: obj,
+           async: false,
+           url: &apos;/api/employees&apos;,
+           success: function(response) {
+               employees.push(response);
+               //console.log(response);
+           }
+      });
+    }
+
+     /***
+     * When a patient submits their form
+     * @param none
+     * @returns updates the employee list
+     */
+    function submitForm(){
+        var d = grabFormElements();
+        console.log(d);
+        updateEmployeeList(d);
+        $(&quot;#employee-list&quot;).html(template(employees));
+        document.getElementById(&quot;employee-form&quot;).reset();
+    }
+
+    /***
+     * Grabs elements from the check in and puts it into an object
+     * @param none
+     * @returns new employee object
+     */
+    function grabFormElements(){
+        var newEmployee = {};
+        newEmployee.company_id = myCompanyId;
+        newEmployee.role = &quot;c_employee&quot;,
+        newEmployee.first_name= $(&apos;#employee-first&apos;).val();
+        newEmployee.last_name = $(&apos;#employee-last&apos;).val();
+        newEmployee.phone_number = $(&apos;#employee-number&apos;).val();
+        newEmployee.email = $(&apos;#employee-email&apos;).val();
+        newEmployee.password = $(&apos;#employee-pw&apos;).val();
+        newEmployee.confirm_password = $(&apos;#employee-confirm-pw&apos;).val();
+        return newEmployee;
+    }
+
+     /***
+     * Find Specific Employee Given Employee ID within the Employee Array
+     * @param id
+     * @returns {string}
+     */
+    function findEmployee(id){
+
+        for(var employee in employeeList) {
+           if(employeeList.hasOwnProperty(employee)){
+              if(employeeList[employee]._id === id){
+                  if(DEBUG) //console.log(employeeList[employee]);
+                  return employeeList[employee];
+              }
+           }
+        }
+    }
+
+    $(&apos;#logoutButton&apos;).on(&apos;click&apos;,function(){
+      localStorage.setItem(&apos;userState&apos;,0);
+    });
+
+
+});
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

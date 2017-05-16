@@ -1,0 +1,31 @@
+{
+  "coverage": "0%",
+  "expectCount": 6,
+  "actualCount": 0,
+  "files": {
+    "js/login.js": {
+      "expectCount": 4,
+      "actualCount": 0,
+      "undocumentLines": [
+        52,
+        23,
+        68,
+        77
+      ]
+    },
+    "js/dashboard.js": {
+      "expectCount": 1,
+      "actualCount": 0,
+      "undocumentLines": [
+        1
+      ]
+    },
+    "js/shared.js": {
+      "expectCount": 1,
+      "actualCount": 0,
+      "undocumentLines": [
+        10
+      ]
+    }
+  }
+}

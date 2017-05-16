@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">js/appointments.js | API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  <a data-ice="repoURL" href="https://github.com/thiefjack/WebStormTroopers" class="repo-url-github">Repository</a>
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ajaxGetCompanyInfo">ajaxGetCompanyInfo</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-ajaxPostUser">ajaxPostUser</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-grabUserData">grabUserData</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-handleError">handleError</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-userState">userState</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-userState">userState</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">js/appointments.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">$(document).ready(function(){
+    var companyData = JSON.parse(localStorage.getItem(&quot;currentCompany&quot;));
+    var myCompanyId = companyData._id;
+    var curUser = JSON.parse(localStorage.getItem(&apos;currentUser&apos;));
+
+  
+    $(&apos;#user-name&apos;).text(curUser.first_name + &apos; &apos; +  curUser.last_name);
+
+    var appts = getAppts();
+
+    function initializeAppts (appts){
+      appts.sort(function(a,b){
+        return new Date(a.date) - new Date(b.date);
+      });
+      for(var i = 0, len = appts.length; i &lt; len; i++){
+        appts[i].fullDate = formatDate(appts[i].date.toString());
+        appts[i].appointmentTime = formatTime(appts[i].date.toString());
+      }
+      return appts;
+    }
+
+    appts = initializeAppts(appts);
+    var source = $(&quot;#appt-list-template&quot;).html();
+    var template = Handlebars.compile(source);
+    var compiledHtml = template(appts);
+
+    $(&quot;#appt-list&quot;).html(compiledHtml);
+    $(&apos;.save-btn&apos;).click(submitForm);
+    
+   /***
+     * Makes a get request to display list of appts
+     * @param none
+     * @returns displays the appt list
+     */
+    function getAppts() {
+       var json;
+       $.ajax({
+           dataType: &apos;json&apos;,
+           type: &apos;GET&apos;,
+           data: $(&apos;#response&apos;).serialize(),
+           async: false,
+           url: &apos;/api/appointments/company/&apos; + myCompanyId,
+           success: function(response) {
+               json = response;
+               console.log(response);
+           }
+       });
+       return json;
+   }
+
+   /***
+     * When a patient submits their form
+     * @param none
+     * @returns updates the appt list
+     */
+    function submitForm(){
+        var d = grabFormElements();
+        console.log(d);
+        updateApptList(d);
+        appts = getAppts();
+        appts = initializeAppts(appts);
+        $(&quot;#appt-list&quot;).html(template(appts));
+        document.getElementById(&quot;appt-form&quot;).reset();
+    }
+
+    /***
+     * Makes a post request to update list of appts when adding a new employee
+     * @param none
+     * @returns updates the appt list
+     */
+   function updateApptList(obj) {
+      $.ajax({
+        dataType: &apos;json&apos;,
+           type: &apos;POST&apos;,
+           data: obj,
+           async: false,
+           url: &apos;/api/appointments/&apos;,
+           success: function(response) {
+                appts.push(response);
+                console.log(response);
+           }
+      });
+    }
+
+
+    /***
+     * Grabs elements from the check in and puts it into an object
+     * @param none
+     * @returns new appt object
+     */
+    function grabFormElements(){
+      var newAppt = {};
+      var userTime,userDate;
+      newAppt.company_id = myCompanyId;
+      newAppt.first_name= $(&apos;#appt-first&apos;).val();
+      newAppt.last_name = $(&apos;#appt-last&apos;).val();
+      newAppt.phone_number = $(&apos;#appt-number&apos;).val();
+      newAppt.provider_name = $(&apos;#appt-provider&apos;).val();
+
+      userDate = $(&apos;#appt-date&apos;).val();
+      userTime = $(&apos;#appt-time&apos;).val();
+
+      newAppt.date = jsDate(userDate,userTime);
+      return newAppt;
+    } 
+
+    $(document).on(&apos;click&apos;,&apos;.delete-appt&apos;,function(){
+      var apptId = $(this).closest(&apos;.appt-row&apos;).attr(&apos;value&apos;);
+      console.log(&quot;delete&quot;);
+      $.ajax({
+        dataType:&apos;json&apos;,
+        type: &apos;DELETE&apos;,
+        url:&apos;/api/appointments/&apos; + apptId,
+        success:function(response){
+          var updateAppts = getAppts();
+          var removeAppt = initializeAppts(updateAppts);
+          $(&quot;#appt-list&quot;).html(template(removeAppt));
+
+        }
+      });
+
+    });
+
+
+    /********************* FUNCTIONS TO FORMAT JAVASCRIPT DATES ********************/
+
+    function formatDate(date){
+      var d = new Date(Date.parse(date));
+      var mm = d.getMonth() + 1;
+      var yyyy = d.getFullYear();
+      var dd = d.getDate();
+      //var monthArray = [&quot;Jan&quot;, &quot;Feb&quot;, &quot;Mar&quot;, &quot;Apr&quot;, &quot;May&quot;, &quot;Jun&quot;, &quot;Jul&quot;, &quot;Aug&quot;,&quot;Sep&quot;,&quot;Nov&quot;,&quot;Dec&quot;];
+      if(dd &lt; 10){
+        dd = &apos;0&apos; + dd;
+      }
+      if(mm &lt; 10){
+        mm = &apos;0&apos; + mm;
+      }
+      //console.log(monthArray[mm]);
+      return  mm + &apos;/&apos; + dd + &apos;/&apos; +  + yyyy;
+    }
+    function formatNumber(number){
+      return &apos;(&apos; + number.substr(0,3) + &apos;)&apos; + number.substr(3,3) + &apos;-&apos; + number.substr(6,4);
+    }
+
+    //FUNCTION TO FORMAT DATE OBJECT IN JS
+    function jsDate(date,time){
+      var jsDate = reFormatDate(date);
+      var jsTime = reFormatTime(time);
+      jsDateObj = jsDate + &apos; &apos; + jsTime;
+      return jsDateObj;
+    }
+
+    //FUNCTION TO FORMAT DATE TO JS FOR ROBOTS
+    function reFormatDate(date){
+      var d = new Date(Date.parse(date));
+      var mm = d.getMonth() + 1;
+      var yyyy = d.getFullYear();
+      var dd = d.getDate();
+
+      if(dd &lt; 10){
+        dd = &apos;0&apos; + dd;
+      }
+      if(mm &lt; 10){
+        mm = &apos;0&apos; + mm;
+      }
+      return  yyyy + &apos;-&apos; + mm +&apos;-&apos; + dd;
+    }
+
+
+    //FUNCTION TO FORMAT TIME TO JS FOR ROBOTS
+    function reFormatTime(time){
+      var ampm = time.substr(-2,2);
+      var formattedTime;
+      var formattedHour;
+      var colon = time.indexOf(&quot;:&quot;);
+
+      if(ampm === &quot;PM&quot;){
+        formattedHour = time.substr(0,2);
+
+        if(formattedHour == &apos;12&apos;)
+          formattedHour = 12;  
+        else
+          formattedHour = 12 + parseInt(time.substr(0,2));
+
+        formattedTime = formattedHour + time.substr(colon,3) + &quot;:00&quot;;
+      }
+      else{
+
+        formattedHour = parseInt(time.substr(0,2));
+        if(formattedHour &lt; 10){
+          formattedHour = &apos;0&apos; + formattedHour;
+        }
+        if(formattedHour == 12){
+          formattedHour = &apos;00&apos;;
+        }
+        formattedTime = formattedHour + time.substr(colon,3) + &apos;:00&apos;;
+      }
+
+      return formattedTime;
+    }
+
+
+    //FUNCTION TO FORMAT TIME TO AM AND PM FOR HUMANS
+    function formatTime(time){
+        var currentTime = new Date(Date.parse(time));
+        var hour = currentTime.getHours();
+        var minute = currentTime.getMinutes();
+
+        if(minute &lt; 10) {
+            minute = &apos;0&apos; + minute;
+        }
+
+        if(hour &gt;= 13){
+            hour = hour-12;
+            currentTime = hour + &apos;:&apos; + minute + &apos;PM&apos;;
+        }
+
+        else if(hour === 12){
+            currentTime = hour + &apos;:&apos; + minute +&apos;PM&apos;;
+        }
+        else if(hour === 0){
+            currentTime = 1 + &apos;:&apos; + minute + &apos;AM&apos;;
+        }
+        else{
+            currentTime = hour + &apos;:&apos; + minute +&apos;AM&apos;;
+        }
+
+        return currentTime;
+
+    }
+
+});
+</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.5.2)</span><img src="./image/esdoc-logo-mini-black.png"></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>
