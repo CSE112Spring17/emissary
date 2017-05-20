@@ -23,6 +23,8 @@ http://webstormtroopers.herokuapp.com
 ### 1.2 Instructions
 **Step 1:** Do a `git clone` on our project on **Github** (https://github.com/thiefjack/WebStormTroopers/).
 
+**Step 2:** Change node version to `v0.10.48`
+
 **Step 2:** Run `npm install` in the directory of the project to install the dependency for the backend.
 
 **Step 3:** Run `gulp test:server` to test the backend API.
