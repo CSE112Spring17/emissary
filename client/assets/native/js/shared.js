@@ -7,6 +7,9 @@ var companyName = companyData.name;
 console.log(companyData);
 $('#user-name').text(curUser.first_name + ' ' +  curUser.last_name);*/
 
+/**
+ * A JSON contains the user's state
+ */
 var userState = JSON.parse(localStorage.getItem("userState"));
   if(!userState || userState == 2){
     location.href= "login.html";

@@ -60,13 +60,14 @@
         <p>
           
           
-          <span data-ice="name"><span><a href="function/index.html#static-function-ajaxGetCompanyInfo">ajaxGetCompanyInfo</a></span></span><span data-ice="signature">(url: <span>*</span>)</span>
+          <span data-ice="name"><span><a href="function/index.html#static-function-ajaxGetCompanyInfo">ajaxGetCompanyInfo</a></span></span><span data-ice="signature">(a: <span>*</span>): <span>*</span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Ajax function to create a POST request to server</p>
+</div>
       </div>
     </td>
     <td>
@@ -87,13 +88,14 @@
         <p>
           
           
-          <span data-ice="name"><span><a href="function/index.html#static-function-ajaxPostUser">ajaxPostUser</a></span></span><span data-ice="signature">(url: <span>*</span>, data: <span>*</span>)</span>
+          <span data-ice="name"><span><a href="function/index.html#static-function-ajaxPostUser">ajaxPostUser</a></span></span><span data-ice="signature">(url,: <span>*</span>): <span>*</span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Ajax function to create a POST request to server</p>
+</div>
       </div>
     </td>
     <td>
@@ -114,13 +116,14 @@
         <p>
           
           
-          <span data-ice="name"><span><a href="function/index.html#static-function-grabUserData">grabUserData</a></span></span><span data-ice="signature">(): <span>*</span></span>
+          <span data-ice="name"><span><a href="function/index.html#static-function-grabUserData">grabUserData</a></span></span><span data-ice="signature">(none: <span>*</span>): <span>*</span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Retrieve user data</p>
+</div>
       </div>
     </td>
     <td>
@@ -141,13 +144,14 @@
         <p>
           
           
-          <span data-ice="name"><span><a href="function/index.html#static-function-handleError">handleError</a></span></span><span data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></span>
+          <span data-ice="name"><span><a href="function/index.html#static-function-handleError">handleError</a></span></span><span data-ice="signature">(none: <span>*</span>): <span>*</span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Uses to handle errors</p>
+</div>
       </div>
     </td>
     <td>
@@ -168,18 +172,19 @@
     
     
     
-    <span data-ice="name">ajaxGetCompanyInfo</span><span data-ice="signature">(url: <span>*</span>)</span>
+    <span data-ice="name">ajaxGetCompanyInfo</span><span data-ice="signature">(a: <span>*</span>): <span>*</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/js/login.js.html#lineNumber52">source</a></span></span>
+      <span data-ice="source"><span><a href="file/js/login.js.html#lineNumber62">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Ajax function to create a POST request to server</p>
+</div>
 
   
 
@@ -192,17 +197,31 @@
     <tbody>
     
     <tr data-ice="property" data-depth="0">
-      <td data-ice="name" data-depth="0">url</td>
+      <td data-ice="name" data-depth="0">a</td>
       <td data-ice="type"><span>*</span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>url</p>
+</td>
     </tr>
 </tbody>
   </table>
 </div>
 </div>
 
-  
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type" data-ice="returnType"><span>*</span></td>
+          <td class="return-desc" data-ice="returnDescription"><p>a JSON contains the company&apos;s information</p>
+</td>
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
 
   
 
@@ -227,18 +246,19 @@
     
     
     
-    <span data-ice="name">ajaxPostUser</span><span data-ice="signature">(url: <span>*</span>, data: <span>*</span>)</span>
+    <span data-ice="name">ajaxPostUser</span><span data-ice="signature">(url,: <span>*</span>): <span>*</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/js/login.js.html#lineNumber23">source</a></span></span>
+      <span data-ice="source"><span><a href="file/js/login.js.html#lineNumber28">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Ajax function to create a POST request to server</p>
+</div>
 
   
 
@@ -251,23 +271,31 @@
     <tbody>
     
     <tr data-ice="property" data-depth="0">
-      <td data-ice="name" data-depth="0">url</td>
+      <td data-ice="name" data-depth="0">url,</td>
       <td data-ice="type"><span>*</span></td>
       <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
-    </tr>
-<tr data-ice="property" data-depth="0">
-      <td data-ice="name" data-depth="0">data</td>
-      <td data-ice="type"><span>*</span></td>
-      <td data-ice="appendix"></td>
-      <td data-ice="description"></td>
+      <td data-ice="description"><p>data</p>
+</td>
     </tr>
 </tbody>
   </table>
 </div>
 </div>
 
-  
+  <div class="return-params" data-ice="returnParams">
+    <h4>Return:</h4>
+    <table>
+      <tbody>
+        <tr>
+          <td class="return-type" data-ice="returnType"><span>*</span></td>
+          <td class="return-desc" data-ice="returnDescription"><p>none</p>
+</td>
+        </tr>
+      </tbody>
+    </table>
+    <div data-ice="returnProperties">
+</div>
+  </div>
 
   
 
@@ -292,22 +320,39 @@
     
     
     
-    <span data-ice="name">grabUserData</span><span data-ice="signature">(): <span>*</span></span>
+    <span data-ice="name">grabUserData</span><span data-ice="signature">(none: <span>*</span>): <span>*</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/js/login.js.html#lineNumber68">source</a></span></span>
+      <span data-ice="source"><span><a href="file/js/login.js.html#lineNumber82">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Retrieve user data</p>
+</div>
 
   
 
-  <div data-ice="properties">
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" data-depth="0">none</td>
+      <td data-ice="type"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+</tbody>
+  </table>
+</div>
 </div>
 
   <div class="return-params" data-ice="returnParams">
@@ -316,7 +361,8 @@
       <tbody>
         <tr>
           <td class="return-type" data-ice="returnType"><span>*</span></td>
-          
+          <td class="return-desc" data-ice="returnDescription"><p>a JSON contains user&apos;s email and password</p>
+</td>
         </tr>
       </tbody>
     </table>
@@ -347,22 +393,39 @@
     
     
     
-    <span data-ice="name">handleError</span><span data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></span>
+    <span data-ice="name">handleError</span><span data-ice="signature">(none: <span>*</span>): <span>*</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/js/login.js.html#lineNumber77">source</a></span></span>
+      <span data-ice="source"><span><a href="file/js/login.js.html#lineNumber95">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Uses to handle errors</p>
+</div>
 
   
 
-  <div data-ice="properties">
+  <div data-ice="properties"><div data-ice="properties">
+  <h4 data-ice="title">Params:</h4>
+  <table class="params">
+    <thead>
+    <tr><td>Name</td><td>Type</td><td>Attribute</td><td>Description</td></tr>
+    </thead>
+    <tbody>
+    
+    <tr data-ice="property" data-depth="0">
+      <td data-ice="name" data-depth="0">none</td>
+      <td data-ice="type"><span>*</span></td>
+      <td data-ice="appendix"></td>
+      <td data-ice="description"></td>
+    </tr>
+</tbody>
+  </table>
+</div>
 </div>
 
   <div class="return-params" data-ice="returnParams">
@@ -370,8 +433,9 @@
     <table>
       <tbody>
         <tr>
-          <td class="return-type" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean">boolean</a></span></td>
-          
+          <td class="return-type" data-ice="returnType"><span>*</span></td>
+          <td class="return-desc" data-ice="returnDescription"><p>boolean of if error handled</p>
+</td>
         </tr>
       </tbody>
     </table>

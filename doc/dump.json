@@ -25,7 +25,7 @@
     "__docId__": 2,
     "kind": "file",
     "name": "js/dashboard.js",
-    "content": "var userState = JSON.parse(localStorage.getItem(\"userState\"));\n  if(!userState){\n    location.href= \"login.html\";\n}\n\n$(document).ready(function(){\n\n\n    var socket = io(); //Initialize Socket\n\n    //Socket variables\n    var DEBUG = 1;\n    var VALIDATE_COMPANY_ID = \"validate_company_id\";\n    var VISITOR_LIST_UPDATE = \"visitor_list_update\";\n    var REMOVE_VISITOR = \"remove_visitor\";\n\n    var companyData = JSON.parse(localStorage.getItem(\"currentCompany\"));\n    var visitorList;\n    companyData.company_id = companyData._id;\n\n\n    //var curCompany = JSON.parse(localStorage.getItem('currentCompany'));\n    var curUser = JSON.parse(localStorage.getItem('currentUser'));\n    var companyName = companyData.name;\n\n\n    $('#user-name').text(curUser.first_name + ' ' +  curUser.last_name);\n\n    //Connect to private socket\n    //var companyId = getCookie('company_id');\n    socket.emit(VALIDATE_COMPANY_ID, companyData);\n\n   /***\n    * Compile all the Handle Bar Templates\n    */\n    //DashBoard Template\n    var source = $(\"#visitor-list-template\").html();\n    var template = Handlebars.compile(source);\n\n    //Modal Template\n    var modal = $('#visitor-info-template').html();\n    var modalTemplate = Handlebars.compile(modal);\n\n    //SOCKET LISTEN FOR VISITOR QUEUE\n    socket.on(VISITOR_LIST_UPDATE, function (data) {\n        visitorList = data.visitors\n        //Parse Visitor List to format Date\n        for(var i = 0, len = visitorList.length; i< len; i++){\n            visitorList[i].checkin_time = formatTime(visitorList[i].checkin_time);\n        }\n\n        //Parse Visitors appoitments\n        for(i = 0; i < len; i++){\n          var appList = visitorList[i].appointments;\n          if(appList[0]){\n            for(var j = 0, appLen = appList.length; j < appLen; j++){\n              if(compareDate(appList[j].date)){\n                visitorList[i].appointmentTime = formatTime(appList[j].date);\n                visitorList[i]._apptId = appList[j]._id;\n                break;\n              }\n            }\n          }\n          else{\n      \n            visitorList[i].appointmentTime = \"None\";\n          }\n        }\n\n       //visitorList.checkin_time = visitorList;\n        var compiledHtml = template(visitorList);\n        $('#visitor-list').html(compiledHtml);\n    });\n\n\n    /***\n    * Listener for Opening a Modal\n    */\n    $(document).on('click','.patient-check-out',function(){\n        var uniqueId = $(this).attr('value');\n        var visitor = findVisitor(uniqueId);\n        var compiledTemplate = modalTemplate(visitor);\n        $('.modal-dialog').html(compiledTemplate);\n    });\n\n    /***\n     * Listener for Checking out a Visitor\n     */\n    $(document).on('click','.check-in-btn',function(){\n        var id = $(this).closest('.modal-content').find('.modal-body').attr('value');\n        var apptId = $(this).closest('.modal-content').find('.modal-left').attr('value');\n\n        var removeVisitor = findVisitor(id);\n   \n        removeVisitor.visitor_id = removeVisitor._id;\n\n        $.ajax({\n          dataType:'json',\n          type: 'DELETE',\n          url:'/api/appointments/' + apptId,\n          success:function(response){\n          }\n        });\n        \n\n        socket.emit(REMOVE_VISITOR, removeVisitor);\n    });\n/*\n    $(document).on('click','.checkout-btn',function(){\n        var id = $(this).closest('.patient-check-out').attr('value');\n        var removeVisitor = findVisitor(id);\n        console.log(removeVisitor);\n        //removeVisitor.visitor_id = removeVisitor._id;\n        //socket.emit(REMOVE_VISITOR, removeVisitor);\n\n    });\n*/\n    /***\n     * Compare appointment Date to today's Date\n     */\n    function compareDate(appointment){\n      var today = new Date();\n      appointment = new Date(Date.parse(appointment));\n\n      var appointmentDate = appointment.getFullYear() + ' ' + appointment.getDate() + ' ' + appointment.getMonth();\n      var todayDate = today.getFullYear() + ' ' + today.getDate() + ' ' + today.getMonth();\n\n      return (appointmentDate == todayDate);\n    }\n\n    /***\n     * Find Specific Visitor Given Visitor ID within the Visitor Array\n     * @param id\n     * @returns {string}\n     */\n    function findVisitor(id){\n\n        for(var visitor in visitorList) {\n           if(visitorList.hasOwnProperty(visitor)){\n              if(visitorList[visitor]._id === id){\n                  if(DEBUG) console.log(visitorList[visitor]);\n                  return visitorList[visitor];\n              }\n           }\n        }\n    }\n\n    /***\n     * Function to format a JSON date object into a string\n     * @param time\n     */\n    function formatTime(time){\n        var currentTime = new Date(Date.parse(time));\n        var hour = currentTime.getHours();\n        var minute = currentTime.getMinutes();\n\n        if(minute < 10) {\n            minute = '0' + minute;\n        }\n\n        if(hour >= 13){\n            hour = hour-12;\n            currentTime = hour + ':' + minute + 'PM';\n        }\n\n        else if(hour === 12){\n            currentTime = hour + ':' + minute +'PM';\n        }\n        else if(hour === 0){\n            currentTime = 1 + ':' + minute + 'AM';\n        }\n        else{\n            currentTime = hour + ':' + minute +'AM';\n        }\n\n        return currentTime;\n\n    }\n\n    $('#logoutButton').on('click',function(){\n      localStorage.setItem('userState',0);\n    });\n\n\n    /***\n     * TODO order the list by increasing order\n     * @param key\n     */\n    function increasingOrder(key){\n\n    }\n\n    /***\n     * TODO order the list by decreasing order\n     * @param key\n     */\n    function decreasingOrder(key){\n\n    }\n\n});\n",
+    "content": "/**\n * A JSON contains the user's state\n */\nvar userState = JSON.parse(localStorage.getItem(\"userState\"));\n  if(!userState){\n    location.href= \"login.html\";\n}\n\n$(document).ready(function(){\n\n\n    var socket = io(); //Initialize Socket\n\n    //Socket variables\n    var DEBUG = 1;\n    var VALIDATE_COMPANY_ID = \"validate_company_id\";\n    var VISITOR_LIST_UPDATE = \"visitor_list_update\";\n    var REMOVE_VISITOR = \"remove_visitor\";\n\n    var companyData = JSON.parse(localStorage.getItem(\"currentCompany\"));\n    var visitorList;\n    companyData.company_id = companyData._id;\n\n\n    //var curCompany = JSON.parse(localStorage.getItem('currentCompany'));\n    var curUser = JSON.parse(localStorage.getItem('currentUser'));\n    var companyName = companyData.name;\n\n\n    $('#user-name').text(curUser.first_name + ' ' +  curUser.last_name);\n\n    //Connect to private socket\n    //var companyId = getCookie('company_id');\n    socket.emit(VALIDATE_COMPANY_ID, companyData);\n\n   /***\n    * Compile all the Handle Bar Templates\n    */\n    //DashBoard Template\n    var source = $(\"#visitor-list-template\").html();\n    var template = Handlebars.compile(source);\n\n    //Modal Template\n    var modal = $('#visitor-info-template').html();\n    var modalTemplate = Handlebars.compile(modal);\n\n    //SOCKET LISTEN FOR VISITOR QUEUE\n    socket.on(VISITOR_LIST_UPDATE, function (data) {\n        visitorList = data.visitors\n        //Parse Visitor List to format Date\n        for(var i = 0, len = visitorList.length; i< len; i++){\n            visitorList[i].checkin_time = formatTime(visitorList[i].checkin_time);\n        }\n\n        //Parse Visitors appoitments\n        for(i = 0; i < len; i++){\n          var appList = visitorList[i].appointments;\n          if(appList[0]){\n            for(var j = 0, appLen = appList.length; j < appLen; j++){\n              if(compareDate(appList[j].date)){\n                visitorList[i].appointmentTime = formatTime(appList[j].date);\n                visitorList[i]._apptId = appList[j]._id;\n                break;\n              }\n            }\n          }\n          else{\n      \n            visitorList[i].appointmentTime = \"None\";\n          }\n        }\n\n       //visitorList.checkin_time = visitorList;\n        var compiledHtml = template(visitorList);\n        $('#visitor-list').html(compiledHtml);\n    });\n\n\n    /***\n    * Listener for Opening a Modal\n    */\n    $(document).on('click','.patient-check-out',function(){\n        var uniqueId = $(this).attr('value');\n        var visitor = findVisitor(uniqueId);\n        var compiledTemplate = modalTemplate(visitor);\n        $('.modal-dialog').html(compiledTemplate);\n    });\n\n    /***\n     * Listener for Checking out a Visitor\n     */\n    $(document).on('click','.check-in-btn',function(){\n        var id = $(this).closest('.modal-content').find('.modal-body').attr('value');\n        var apptId = $(this).closest('.modal-content').find('.modal-left').attr('value');\n\n        var removeVisitor = findVisitor(id);\n   \n        removeVisitor.visitor_id = removeVisitor._id;\n\n        $.ajax({\n          dataType:'json',\n          type: 'DELETE',\n          url:'/api/appointments/' + apptId,\n          success:function(response){\n          }\n        });\n        \n\n        socket.emit(REMOVE_VISITOR, removeVisitor);\n    });\n/*\n    $(document).on('click','.checkout-btn',function(){\n        var id = $(this).closest('.patient-check-out').attr('value');\n        var removeVisitor = findVisitor(id);\n        console.log(removeVisitor);\n        //removeVisitor.visitor_id = removeVisitor._id;\n        //socket.emit(REMOVE_VISITOR, removeVisitor);\n\n    });\n*/\n    /***\n     * Compare appointment Date to today's Date\n     */\n    function compareDate(appointment){\n      var today = new Date();\n      appointment = new Date(Date.parse(appointment));\n\n      var appointmentDate = appointment.getFullYear() + ' ' + appointment.getDate() + ' ' + appointment.getMonth();\n      var todayDate = today.getFullYear() + ' ' + today.getDate() + ' ' + today.getMonth();\n\n      return (appointmentDate == todayDate);\n    }\n\n    /***\n     * Find Specific Visitor Given Visitor ID within the Visitor Array\n     * @param id\n     * @returns {string}\n     */\n    function findVisitor(id){\n\n        for(var visitor in visitorList) {\n           if(visitorList.hasOwnProperty(visitor)){\n              if(visitorList[visitor]._id === id){\n                  if(DEBUG) console.log(visitorList[visitor]);\n                  return visitorList[visitor];\n              }\n           }\n        }\n    }\n\n    /***\n     * Function to format a JSON date object into a string\n     * @param time\n     */\n    function formatTime(time){\n        var currentTime = new Date(Date.parse(time));\n        var hour = currentTime.getHours();\n        var minute = currentTime.getMinutes();\n\n        if(minute < 10) {\n            minute = '0' + minute;\n        }\n\n        if(hour >= 13){\n            hour = hour-12;\n            currentTime = hour + ':' + minute + 'PM';\n        }\n\n        else if(hour === 12){\n            currentTime = hour + ':' + minute +'PM';\n        }\n        else if(hour === 0){\n            currentTime = 1 + ':' + minute + 'AM';\n        }\n        else{\n            currentTime = hour + ':' + minute +'AM';\n        }\n\n        return currentTime;\n\n    }\n\n    $('#logoutButton').on('click',function(){\n      localStorage.setItem('userState',0);\n    });\n\n\n    /***\n     * TODO order the list by increasing order\n     * @param key\n     */\n    function increasingOrder(key){\n\n    }\n\n    /***\n     * TODO order the list by decreasing order\n     * @param key\n     */\n    function decreasingOrder(key){\n\n    }\n\n});\n",
     "static": true,
     "longname": "js/dashboard.js",
     "access": null,
@@ -43,15 +43,8 @@
     "export": false,
     "importPath": "Emissary/js/dashboard.js",
     "importStyle": null,
-    "description": null,
-    "lineNumber": 1,
-    "undocument": true,
-    "unknown": [
-      {
-        "tagName": "@_undocument",
-        "tagValue": ""
-      }
-    ],
+    "description": "A JSON contains the user's state",
+    "lineNumber": 4,
     "type": {
       "types": [
         "*"
@@ -73,7 +66,7 @@
     "__docId__": 5,
     "kind": "file",
     "name": "js/login.js",
-    "content": "// with Button named loginButton\n$(function() {\n   $('#loginButton').click(function () {\n       var userData = grabUserData();\n       //alert(userData);\n       event.preventDefault();\n       ajaxPostUser('/api/employees/login', userData);\n       \n   });\n});\n\n\n// with Button named signin-bt\n$(function() {\n   $('#logoutButton').click(function() {\n       localStorage.removeItem('userState');\n       localStorage.removeItem('currentUser');\n       localStorage.removeItem('currentCompany');\n   });\n});\n\n//Ajax function to create a POST request to server\nfunction ajaxPostUser(url, data){\n   $.ajax({\n       type: \"POST\",\n       url: url,\n       data: data,\n       dataType: 'json',\n       success: function(response){\n           console.log(response);\n           if(response.role == 'a_admin'){\n             localStorage.setItem('userState' , 2);\n             location.href = '/admin-dashboard.html'\n           }\n           else{\n             localStorage.setItem('userState' , 1);\n             localStorage.setItem('currentUser', JSON.stringify(response));\n             ajaxGetCompanyInfo('/api/companies/' + response.company_id);\n             location.href = '/visitors.html';\n         }\n       },\n       error: function() {\n\n           window.onerror=handleError();\n           event.preventDefault();\n           //location.href = '/login.html';\n        }\n   });\n}\n// ex) company_id : 56e8a51293a19986040e93fe\n//Ajax function to create a POST request to server\nfunction ajaxGetCompanyInfo(url){\n   $.ajax({\n       type: \"GET\",\n       url: url,\n       data: $('#response').serialize(),\n       async: false,\n       dataType: 'json',\n       success: function(response){\n           console.log(response);\n           //alert(response.name);\n           localStorage.setItem('currentCompany', JSON.stringify(response));\n       }\n   });\n}\n\n//Grab user data from form\nfunction grabUserData(){\n   var user = {};\n   user.email = $('#username').val();\n   user.password = $('#password').val();\n   return user;\n}\n\n\n\nfunction handleError()\n{\n   errorlog.innerHTML=\"Not Valid Username and Password, please type valid one.\";\n   return true;\n}",
+    "content": "// with Button named loginButton\n$(function() {\n   $('#loginButton').click(function () {\n       var userData = grabUserData();\n       //alert(userData);\n       event.preventDefault();\n       ajaxPostUser('/api/employees/login', userData);\n       \n   });\n});\n\n\n// with Button named signin-bt\n$(function() {\n   $('#logoutButton').click(function() {\n       localStorage.removeItem('userState');\n       localStorage.removeItem('currentUser');\n       localStorage.removeItem('currentCompany');\n   });\n});\n\n//Ajax function to create a POST request to server\n   /***\n     * Ajax function to create a POST request to server\n     * @param url, data\n     * @returns none\n     */\nfunction ajaxPostUser(url, data){\n   $.ajax({\n       type: \"POST\",\n       url: url,\n       data: data,\n       dataType: 'json',\n       success: function(response){\n           console.log(response);\n           if(response.role == 'a_admin'){\n             localStorage.setItem('userState' , 2);\n             location.href = '/admin-dashboard.html'\n           }\n           else{\n             localStorage.setItem('userState' , 1);\n             localStorage.setItem('currentUser', JSON.stringify(response));\n             ajaxGetCompanyInfo('/api/companies/' + response.company_id);\n             location.href = '/visitors.html';\n         }\n       },\n       error: function() {\n\n           window.onerror=handleError();\n           event.preventDefault();\n           //location.href = '/login.html';\n        }\n   });\n}\n// ex) company_id : 56e8a51293a19986040e93fe\n//Ajax function to create a POST request to server\n   /***\n     * Ajax function to create a POST request to server\n     * @param a url\n     * @returns a JSON contains the company's information\n     */\nfunction ajaxGetCompanyInfo(url){\n   $.ajax({\n       type: \"GET\",\n       url: url,\n       data: $('#response').serialize(),\n       async: false,\n       dataType: 'json',\n       success: function(response){\n           console.log(response);\n           //alert(response.name);\n           localStorage.setItem('currentCompany', JSON.stringify(response));\n       }\n   });\n}\n\n   /***\n     * Retrieve user data\n     * @param none\n     * @returns a JSON contains user's email and password\n     */\nfunction grabUserData(){\n   var user = {};\n   user.email = $('#username').val();\n   user.password = $('#password').val();\n   return user;\n}\n\n\n   /***\n     * Uses to handle errors\n     * @param none\n     * @returns boolean of if error handled\n     */\nfunction handleError()\n{\n   errorlog.innerHTML=\"Not Valid Username and Password, please type valid one.\";\n   return true;\n}",
     "static": true,
     "longname": "js/login.js",
     "access": null,
@@ -93,29 +86,34 @@
     "export": false,
     "importPath": "Emissary/js/login.js",
     "importStyle": null,
-    "description": null,
-    "lineNumber": 23,
-    "undocument": true,
+    "description": "Ajax function to create a POST request to server",
+    "lineNumber": 28,
     "unknown": [
       {
-        "tagName": "@_undocument",
-        "tagValue": ""
+        "tagName": "@returns",
+        "tagValue": "none"
       }
     ],
     "params": [
       {
-        "name": "url",
+        "nullable": null,
         "types": [
           "*"
-        ]
-      },
-      {
-        "name": "data",
-        "types": [
-          "*"
-        ]
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "url,",
+        "description": "data"
       }
-    ]
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "none"
+    }
   },
   {
     "__docId__": 7,
@@ -130,23 +128,34 @@
     "export": false,
     "importPath": "Emissary/js/login.js",
     "importStyle": null,
-    "description": null,
-    "lineNumber": 52,
-    "undocument": true,
+    "description": "Ajax function to create a POST request to server",
+    "lineNumber": 62,
     "unknown": [
       {
-        "tagName": "@_undocument",
-        "tagValue": ""
+        "tagName": "@returns",
+        "tagValue": "a JSON contains the company's information"
       }
     ],
     "params": [
       {
-        "name": "url",
+        "nullable": null,
         "types": [
           "*"
-        ]
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "a",
+        "description": "url"
       }
-    ]
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "a JSON contains the company's information"
+    }
   },
   {
     "__docId__": 8,
@@ -161,20 +170,33 @@
     "export": false,
     "importPath": "Emissary/js/login.js",
     "importStyle": null,
-    "description": null,
-    "lineNumber": 68,
-    "undocument": true,
+    "description": "Retrieve user data",
+    "lineNumber": 82,
     "unknown": [
       {
-        "tagName": "@_undocument",
-        "tagValue": ""
+        "tagName": "@returns",
+        "tagValue": "a JSON contains user's email and password"
       }
     ],
-    "params": [],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "none",
+        "description": ""
+      }
+    ],
     "return": {
+      "nullable": null,
       "types": [
         "*"
-      ]
+      ],
+      "spread": false,
+      "description": "a JSON contains user's email and password"
     }
   },
   {
@@ -190,20 +212,33 @@
     "export": false,
     "importPath": "Emissary/js/login.js",
     "importStyle": null,
-    "description": null,
-    "lineNumber": 77,
-    "undocument": true,
+    "description": "Uses to handle errors",
+    "lineNumber": 95,
     "unknown": [
       {
-        "tagName": "@_undocument",
-        "tagValue": ""
+        "tagName": "@returns",
+        "tagValue": "boolean of if error handled"
       }
     ],
-    "params": [],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "none",
+        "description": ""
+      }
+    ],
     "return": {
+      "nullable": null,
       "types": [
-        "boolean"
-      ]
+        "*"
+      ],
+      "spread": false,
+      "description": "boolean of if error handled"
     }
   },
   {
@@ -221,7 +256,7 @@
     "__docId__": 11,
     "kind": "file",
     "name": "js/shared.js",
-    "content": "/*var companyData = JSON.parse(localStorage.getItem(\"currentCompany\"));\nvar visitorList;\ncompanyData.company_id = companyData._id;\nvar curUser = JSON.parse(localStorage.getItem('currentUser'));\n\nvar companyName = companyData.name;\nconsole.log(companyData);\n$('#user-name').text(curUser.first_name + ' ' +  curUser.last_name);*/\n\nvar userState = JSON.parse(localStorage.getItem(\"userState\"));\n  if(!userState || userState == 2){\n    location.href= \"login.html\";\n}\n",
+    "content": "/*var companyData = JSON.parse(localStorage.getItem(\"currentCompany\"));\nvar visitorList;\ncompanyData.company_id = companyData._id;\nvar curUser = JSON.parse(localStorage.getItem('currentUser'));\n\nvar companyName = companyData.name;\nconsole.log(companyData);\n$('#user-name').text(curUser.first_name + ' ' +  curUser.last_name);*/\n\n/**\n * A JSON contains the user's state\n */\nvar userState = JSON.parse(localStorage.getItem(\"userState\"));\n  if(!userState || userState == 2){\n    location.href= \"login.html\";\n}\n",
     "static": true,
     "longname": "js/shared.js",
     "access": null,
@@ -239,15 +274,8 @@
     "export": false,
     "importPath": "Emissary/js/shared.js",
     "importStyle": null,
-    "description": null,
-    "lineNumber": 10,
-    "undocument": true,
-    "unknown": [
-      {
-        "tagName": "@_undocument",
-        "tagValue": ""
-      }
-    ],
+    "description": "A JSON contains the user's state",
+    "lineNumber": 13,
     "type": {
       "types": [
         "*"

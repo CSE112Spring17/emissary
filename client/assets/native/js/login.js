@@ -20,6 +20,11 @@ $(function() {
 });
 
 //Ajax function to create a POST request to server
+   /***
+     * Ajax function to create a POST request to server
+     * @param url, data
+     * @returns none
+     */
 function ajaxPostUser(url, data){
    $.ajax({
        type: "POST",
@@ -49,6 +54,11 @@ function ajaxPostUser(url, data){
 }
 // ex) company_id : 56e8a51293a19986040e93fe
 //Ajax function to create a POST request to server
+   /***
+     * Ajax function to create a POST request to server
+     * @param a url
+     * @returns a JSON contains the company's information
+     */
 function ajaxGetCompanyInfo(url){
    $.ajax({
        type: "GET",
@@ -64,7 +74,11 @@ function ajaxGetCompanyInfo(url){
    });
 }
 
-//Grab user data from form
+   /***
+     * Retrieve user data
+     * @param none
+     * @returns a JSON contains user's email and password
+     */
 function grabUserData(){
    var user = {};
    user.email = $('#username').val();
@@ -73,7 +87,11 @@ function grabUserData(){
 }
 
 
-
+   /***
+     * Uses to handle errors
+     * @param none
+     * @returns boolean of if error handled
+     */
 function handleError()
 {
    errorlog.innerHTML="Not Valid Username and Password, please type valid one.";

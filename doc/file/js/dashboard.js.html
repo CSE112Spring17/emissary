@@ -43,7 +43,10 @@
 </nav>
 
 <div class="content" data-ice="content"><h1 data-ice="title">js/dashboard.js</h1>
-<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">var userState = JSON.parse(localStorage.getItem(&quot;userState&quot;));
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">/**
+ * A JSON contains the user&apos;s state
+ */
+var userState = JSON.parse(localStorage.getItem(&quot;userState&quot;));
   if(!userState){
     location.href= &quot;login.html&quot;;
 }

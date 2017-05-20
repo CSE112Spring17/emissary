@@ -1,3 +1,6 @@
+/**
+ * A JSON contains the user's state
+ */
 var userState = JSON.parse(localStorage.getItem("userState"));
   if(!userState){
     location.href= "login.html";
