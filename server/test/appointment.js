@@ -37,8 +37,8 @@ describe('Appointment Test', function() {
 
 
     before(function(done) {
-
-        //setup company
+      this.timeout(8000);
+      //setup company
         var company = new Company();
         company.email = email;
         company.credit_card_number = credit_card_number;
@@ -72,7 +72,8 @@ describe('Appointment Test', function() {
 
 
     it("should not create the appointment", function(done) {
-        request(url)
+      this.timeout(8000);
+      request(url)
             .post('/api/appointments')
             .send(
                 {

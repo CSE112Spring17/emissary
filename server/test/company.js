@@ -7,8 +7,8 @@ describe('Company Test', function() {
     var token;
     var currCompany;
 
-    var email = "test@test.edu";
-    var name = "test";
+    var email = "test2@test.edu";
+    var name = "test2";
     var expiration_date="6/17";
     var phone_number="1234567890";
 
