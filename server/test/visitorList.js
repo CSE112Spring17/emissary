@@ -21,9 +21,9 @@ describe("VisitorList", function() {
 
     //info for the company
     var company_info = {
-        email: "test@test.edu",
+        email: "test2@test.edu",
         credit_card_number: "1231231241251",
-        name: "test",
+        name: "test2",
         expiration_date: "6/17",
         phone_number: "1234567890",
         paid_time: new Date()
