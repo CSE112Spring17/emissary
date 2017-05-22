@@ -29,6 +29,6 @@ http://webstormtroopers.herokuapp.com
 
 **Step 3:** Run `gulp test:server` to test the backend API.
 
-**Step 4:** Run `gulp test:client` to test the frontend dependecies.
+**Step 4:** Run `npm run config` first and then run `npm run e2e` to perform the system tests.
 
 **Step 5:** Run `npm start` to start the application.
