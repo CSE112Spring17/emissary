@@ -9,7 +9,7 @@ module.exports = {
 			.pause(1000)
 
 			//testing sign up page
-			.click("div.callout-button")
+			/*.click("div.callout-button")
 			.pause(3000)
 			.assert.attributeContains('body','id',"sign-up-body")
 			.assert.visible('input[name=name]')
@@ -19,7 +19,6 @@ module.exports = {
 			.assert.visible('input[name=phone_number]')
 			.setValue('input[name=phone_number]','8880008888')
 			.pause(2000)
-
 
 			.assert.visible('button[id=submit-company-btn]')
 			.click('button[id=submit-company-btn]')
@@ -49,7 +48,7 @@ module.exports = {
 			.assert.title('Login')
 			.pause(1000)
 			.assert.visible("div#visitor-queue")
-			.pause(3000)
+			.pause(3000)*/
 			//finish testing signing up
 
 			.url('http://35.185.226.210/login.html')
