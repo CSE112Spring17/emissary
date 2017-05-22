@@ -10,7 +10,7 @@
   "scripts": {
     "postinstall": "bower install && gulp build:prod",
     "start": "node server/app.js",
-    "test": "gulp test:server && gulp test:client",
+    "test": "gulp test:server",
     "config": "node nightwatch.conf.BASIC.js",
     "e2e": "node_modules/nightwatch/bin/nightwatch --config nightwatch.conf.BASIC.js"
   },
