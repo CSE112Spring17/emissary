@@ -17,3 +17,5 @@ mobile/www/*
 !mobile/README
 *.swp
 *.iml
+
+coverage/

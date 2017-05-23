@@ -3,6 +3,10 @@ override:
   # - npm run config
   # - npm run e2e
 
+general:
+  artifacts:
+    - ./coverage
+
 deployment:
   staging:
     branch: Dev
