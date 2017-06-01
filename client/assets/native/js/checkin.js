@@ -15,11 +15,11 @@ $(document).ready(function(){
     };
 
     //Bind Listeners
-    $('#tap-to-check').on('click', startCheckIn);
-    $('.check-in').on('submit', submitForm);
+    //$('#tap-to-check').on('click', startCheckIn);
+    $('.checkin').on('submit', submitForm);
 
     //When a user starts their check in
-    function startCheckIn(){
+    /*function startCheckIn(){
         $('.check-in').addClass('show');
         $('.check-in').animate({
             top:'10%',
@@ -27,7 +27,7 @@ $(document).ready(function(){
         }, 700);
         $(this).addClass('hide');
         $('#clock').addClass('hide');
-    }
+    }*/
 
     //When a patient submits their form
     function submitForm(){
@@ -106,6 +106,10 @@ $(document).ready(function(){
         }
 
     }
+
+    $(document).on('hidden', '.custom-modal', function () {
+        $(this).remove();
+    });
 
 
 });

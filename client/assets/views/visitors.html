@@ -11,6 +11,10 @@
 	<link rel="icon" href="assets/images/logo-emissary.png">
 
 	<title>Emissary | Visitors</title>
+	
+
+    <link rel="icon" href="assets/images/logo-emissary.png">
+    <link rel="stylesheet" href = "assets/native/css/checkin.css">
 	<link rel="stylesheet" href="assets/font-awesome/css/font-awesome.css">
 	<link rel="stylesheet" href="assets/js/jquery-ui/css/no-theme/jquery-ui-1.10.3.custom.min.css">
 	<link rel="stylesheet" href="assets/css/font-icons/entypo/css/entypo.css">
@@ -26,7 +30,7 @@
 	
 
 	<script src="assets/js/jquery-1.11.3.min.js"></script>
-
+	<script src = "assets/native/js/shared.js"></script>
 	<!--[if lt IE 9]><script src="assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
 
 	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -161,13 +165,53 @@
 
             <tbody id= "visitor-list">
                 <!-- PATIENT QUEUE TEMPLATE GOES HERE -->
-
+                
                 <div class="modal fade" id="myModal" role="dialog">
                     <div class="modal-dialog"></div>
                 </div>
 
             </tbody>
         </table>
+
+
+        <div class="modal fade" id="checkinModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<!-- Modal Header -->
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">
+							<span aria-hidden="true">&times;</span>
+							<span class="sr-only">Close</span>
+						</button>
+						<h4 class="modal-title" id="myModalLabel">
+							Check in
+						</h4>
+					</div>
+
+					<!-- Modal Body -->
+					<div class="modal-body">
+
+						<h1 id = "clock"></h1>
+						<form class = "checkin">
+							
+							<input class = "visitor-fields" id="visitor-first" type = "text" name = "first" placeholder = "First"> <br>
+							<input class = "visitor-fields" id="visitor-last" type = "text" name = "last" placeholder = "Last"> <br>
+							<input class = "visitor-fields" id="visitor-number" type = "text" name = "phoneNumber" placeholder = "Phone Number">
+							<br>
+
+							<input class = "submit-check-in" type="submit" value="Check-In">
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class = "checkin-button" data-toggle="modal" data-target="#checkinModal">Check-In</div>
+
+
+
+
+
         </div>
         </div>
         <!-- HANDLE BAR TEMPLATES -->
@@ -211,6 +255,12 @@
 
 		</div>
 	</div>
+
+
+<script src="assets/js/socket.io.js"></script>
+<script src="assets/js/jquery-1.11.3.min.js"></script>
+<script src="assets/native/js/checkin.js"></script>
+
 
 <script type ="text/javascript" src = "assets/native/js/dashboard.js"> </script>
 <!-- Imported styles on this page -->
