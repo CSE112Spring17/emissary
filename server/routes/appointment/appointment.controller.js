@@ -83,6 +83,15 @@ module.exports.template.getToday = function(req, res) {
   });
 };
 
+module.exports.template.getAllAppointments = function(req, res) {
+    Appointment.find({}, function(err, result){        
+            if(err){
+                return res.status(400).json("err");
+            }
+            return res.status(200).json(result);
+        });
+};
+
 module.exports.template.get = function(req, res) {
     Appointment.findOne({_id: req.params.id}, function(err, a) {
         if(err || !a)
