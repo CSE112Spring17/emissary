@@ -17,6 +17,18 @@ $(document).ready(function($){
     });
 });
 
+$('.closebtn').click(function() {
+      console.log("close");
+      document.getElementById("confirmation").style.display='none';
+    });
+
+$('.save-form').click(function() {
+      console.log("save");
+      document.getElementById("confirmation").style.display='';
+    });
+
+
+
 $('.my-form').on('click', '.remove-box', function(){
     $(this).parent().css( 'background-color', '#FF6C6C' );
     $(this).parent().fadeOut("slow", function() {

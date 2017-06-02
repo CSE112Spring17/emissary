@@ -29,6 +29,28 @@ $(document).ready(function(){
 
     $('.closebtn').click(function() {
       console.log("close");
+      document.getElementById("notification").style.display='none';
+    });
+
+    $('.button-yes').click(function() {
+      var apptId = $('.delete-appt').closest('.appt-row').attr('value');
+      console.log("delete");
+      $.ajax({
+        dataType:'json',
+        type: 'DELETE',
+        url:'/api/appointments/' + apptId,
+        success:function(response){
+          var updateAppts = getAppts();
+          var removeAppt = initializeAppts(updateAppts);
+          $("#appt-list").html(template(removeAppt));
+
+        }
+      });
+      document.getElementById("confirmation").style.display='none';
+    });
+
+    $('.button-no').click(function() {
+      console.log("not delete");
       document.getElementById("confirmation").style.display='none';
     });
     
@@ -107,24 +129,15 @@ $(document).ready(function(){
 
       newAppt.date = jsDate(userDate,userTime);
       return newAppt;
+    }
+
+    function deleteAppt() {
+      
     } 
 
     $(document).on('click','.delete-appt',function(){
-
-
-      var apptId = $(this).closest('.appt-row').attr('value');
-      console.log("delete");
-      $.ajax({
-        dataType:'json',
-        type: 'DELETE',
-        url:'/api/appointments/' + apptId,
-        success:function(response){
-          var updateAppts = getAppts();
-          var removeAppt = initializeAppts(updateAppts);
-          $("#appt-list").html(template(removeAppt));
-
-        }
-      });
+      document.getElementById("confirmation").style.display='block';
+      
     });
 
 
