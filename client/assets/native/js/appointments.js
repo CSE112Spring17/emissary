@@ -26,6 +26,11 @@ $(document).ready(function(){
 
     $("#appt-list").html(compiledHtml);
     $('.save-btn').click(submitForm);
+
+    $('.closebtn').click(function() {
+      console.log("close");
+      document.getElementById("confirmation").style.display='none';
+    });
     
    /***
      * Makes a get request to display list of appts
@@ -61,7 +66,7 @@ $(document).ready(function(){
         appts = initializeAppts(appts);
         $("#appt-list").html(template(appts));
         document.getElementById("appt-form").reset();
-    }
+        document.getElementById("confirmation").style.display='';    }
 
     /***
      * Makes a post request to update list of appts when adding a new employee
@@ -105,6 +110,8 @@ $(document).ready(function(){
     } 
 
     $(document).on('click','.delete-appt',function(){
+
+
       var apptId = $(this).closest('.appt-row').attr('value');
       console.log("delete");
       $.ajax({
@@ -118,7 +125,6 @@ $(document).ready(function(){
 
         }
       });
-
     });
 
 
