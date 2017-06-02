@@ -107,9 +107,4 @@ $(document).ready(function(){
 
     }
 
-    $(document).on('hidden', '.custom-modal', function () {
-        $(this).remove();
-    });
-
-
 });
