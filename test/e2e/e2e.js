@@ -81,6 +81,20 @@ module.exports = {
 			.assert.title('Emissary | Visitors')
 			.assert.visible("div#visitor-queue")
 			.pause(1000)
+		
+			// test check-in button
+			// shoud work after merge and push to master
+			// .assert.visible("div.checkin-button")
+			// .pause(1000)
+			// .assert.visible("div#override_checkin_modal-dialog")
+			// .pause(1000)
+			// .setValue("input#visitor-first.visitor-fields",'testFirst')
+			// .setValue("input#visitor-last.visitor-fields","testLast")
+			// .setValue("input#visitor-number.visitor-fields","000-000-0000")
+			// .pause(1000)
+			// .click('input#override_checkin_submit-check-in.submit-check-in')
+			// .assert.visible("tbody#visitor-list")
+			// .pause(2000)
 
 			.url("http://35.185.226.210/employees.html")
 			.assert.visible("div.employee-container")

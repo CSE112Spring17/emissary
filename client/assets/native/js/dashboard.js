@@ -104,6 +104,7 @@ $(document).ready(function(){
         
 
         socket.emit(REMOVE_VISITOR, removeVisitor);
+        window.location.reload();
     });
 /*
     $(document).on('click','.checkout-btn',function(){

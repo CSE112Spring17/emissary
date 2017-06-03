@@ -83,6 +83,15 @@ table{
    cursor: pointer;
 }
 
+.checkin-button {
+   float: left;
+   border-radius: 2px;
+   padding: 7px;
+   margin-top: 15px;
+   background-color: #01b2bd;
+   color: white;
+}
+
 /*
 .checkout-btn{
    background-color:#5cb85c;
