@@ -3,7 +3,6 @@ $(document).ready(function(){
     var myCompanyId = companyData._id;
     var curUser = JSON.parse(localStorage.getItem('currentUser'));
 
-  
     $('#user-name').text(curUser.first_name + ' ' +  curUser.last_name);
 
     var appts = getAppts();
@@ -53,7 +52,7 @@ $(document).ready(function(){
       console.log("not delete");
       document.getElementById("confirmation").style.display='none';
     });
-    
+
    /***
      * Makes a get request to display list of appts
      * @param none
@@ -81,12 +80,13 @@ $(document).ready(function(){
      * @returns updates the appt list
      */
     function submitForm(){
-        var d = grabFormElements();
-        console.log(d);
-        updateApptList(d);
+        var data = grabFormElements();
+        console.log(data);
+        updateApptList(data);
         appts = getAppts();
         appts = initializeAppts(appts);
         $("#appt-list").html(template(appts));
+
         document.getElementById("appt-form").reset();
         document.getElementById("confirmation").style.display='';    }
 
@@ -119,9 +119,10 @@ $(document).ready(function(){
       var newAppt = {};
       var userTime,userDate;
       newAppt.company_id = myCompanyId;
-      newAppt.first_name= $('#appt-first').val();
-      newAppt.last_name = $('#appt-last').val();
-      newAppt.phone_number = $('#appt-number').val();
+      newAppt.first_name    = $('#appt-first').val();
+      newAppt.last_name     = $('#appt-last').val();
+      newAppt.email         = $('#appt-email').val();
+      newAppt.phone_number  = $('#appt-number').val();
       newAppt.provider_name = $('#appt-provider').val();
 
       userDate = $('#appt-date').val();
@@ -137,7 +138,6 @@ $(document).ready(function(){
 
     $(document).on('click','.delete-appt',function(){
       document.getElementById("confirmation").style.display='block';
-      
     });
 
 
@@ -198,7 +198,7 @@ $(document).ready(function(){
         formattedHour = time.substr(0,2);
 
         if(formattedHour == '12')
-          formattedHour = 12;  
+          formattedHour = 12;
         else
           formattedHour = 12 + parseInt(time.substr(0,2));
 

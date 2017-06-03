@@ -13,8 +13,10 @@ var DISCONNECT = "disconnect";
 var REMOVE_VISITOR = "remove_visitor";
 var ADD_VISITOR = "add_visitor";
 var NOTIFY_ERROR = "notify_error";
+var NOTIFY_NEW_APPOINTMENT = "notify_new_appointment";
 
 var VisitorListCtr = require('../routes/visitorList/visitorList.controller');
+var AppointmentCtr = require('../routes/appointment/appointment.controller');
 var Company = require('../models/Company');
 /********** Socket IO Module **********/
 exports.createServer = function(io_in) {
@@ -101,7 +103,6 @@ exports.createServer = function(io_in) {
                 }
             });
         });
-
     });
     return server;
 };
