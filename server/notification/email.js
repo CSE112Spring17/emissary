@@ -58,12 +58,12 @@ exports.sendEmail = function(patientName, employees, done) {
 // sendEmail: Send email to employees when visitorList is checked in.
 exports.notifyAppointment = function(fname, lname, company_id, date, email) {
   console.log('NOTIFY_NEW_APPOINTMENT');
-//  html = [
-//  'Hello <b>' + fname + ' ' + lname + '</b>,</ br>',
-//  '</ br>You have successfully scheduled an appointment for <b>' + company_id,
-//  ' </b> on <b>' + date + '</b>.</ br> Please make sure this date is correct.',
-//  '</ br></ br>-Peter @ Emissary'
-//  ].join('');
+  var html = [
+  'Hello <b>' + fname + ' ' + lname + '</b>,<br>',
+  '<br>You have successfully scheduled an appointment for <b>' + company_id,
+  ' </b> on <b>' + date + '</b>.</ br> Please make sure this date is correct.',
+  '<br><br>-Peter @ Emissary'
+  ].join('');
 
   console.log(html);
   var mailOptions = {
@@ -76,11 +76,13 @@ exports.notifyAppointment = function(fname, lname, company_id, date, email) {
   };
 
   // send mail with defined transport object
-  transporter.sendMail(mailOptions, (error, info) => {
+  transporter.sendMail(mailOptions, function(error, info) {
     if(error) {
-      return console.log(error);
+      console.log(error);
+      return error;
     } else {
       console.log('Message %s sent: %s', info.messageId, info.response);
+      return 'Message ' + info.messageId + 'sent: ' + info.response;
     }
   });
 };
