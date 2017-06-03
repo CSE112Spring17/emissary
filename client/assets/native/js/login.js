@@ -36,7 +36,7 @@ function ajaxPostUser(url, data){
              localStorage.setItem('userState' , 1);
              localStorage.setItem('currentUser', JSON.stringify(response));
              ajaxGetCompanyInfo('/api/companies/' + response.company_id);
-             location.href = '/visitors.html';
+             location.href = '/company-dashboard.html';
          }
        },
        error: function() {

@@ -125,6 +125,9 @@ app.get('/signup', function(req,res){
 app.get('/visitors', function(req,res){
   res.sendFile(path.join(__dirname,'../dist/assets/views/visitors.html'))
 });
+app.get('/company-dashboard', function(req,res){
+  res.sendFile(path.join(__dirname,'../dist/assets/views/company-dashboard.html'))
+});
 app.get('/404', function(req,res){
   res.sendFile(path.join(__dirname,'../dist/assets/views/404.html'))
 });
@@ -133,6 +136,37 @@ app.get('/admin-settings', function(req,res){
 });
 app.get('/index', function(req,res){
   res.sendFile(path.join(__dirname,'../dist/assets/views/index.html'))
+});
+app.post('/calendarData', function(req, res) {
+  var Appointment = require('./models/Appointment');
+  var company_id = req.body.company_id;
+  var start = req.body.start;
+  var end = req.body.end;
+  var query=
+    {
+      company_id: company_id,
+      date: {$gte:start, $lt: end}
+    };
+
+  Appointment.find(query, function(err, appointments){
+    if(err) return res.status(400).json(err);
+    var data = [];
+    for (var appointment in appointments) {
+
+      var temp = {};
+      temp.title = appointments[appointment].first_name + " " + appointments[appointment].last_name;
+      temp.start = appointments[appointment].date;
+      data.push(temp);
+    }
+    res.setHeader('Content-Type', 'application/json');
+    if(appointments != null)
+    {
+      res.send(JSON.stringify(data));
+    }
+    else{
+      res.send(JSON.stringify({}));
+    }
+  });
 });
 
 app.use('/coverage', express.static(path.join(__dirname, '../coverage/lcov-report')));
