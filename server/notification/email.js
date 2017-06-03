@@ -12,8 +12,8 @@ exports.template = {};
 var transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
-        user: 'testcse112@gmail.com',
-        pass: 'robo_betty'
+        user: 'pv.emissary@gmail.com',
+        pass: 'asdfqwerty'
     }
 });
 
@@ -53,4 +53,37 @@ exports.sendEmail = function(patientName, employees, done) {
     // send mail with defined transport object
     transporter.sendMail(mailOptions, callback(index));
   }
+};
+
+// sendEmail: Send email to employees when visitorList is checked in.
+exports.notifyAppointment = function(data) {
+  console.log('NOTIFY_NEW_APPOINTMENT');
+  console.log(data);
+  console.log(data.first_name);
+  console.log(data.last_name);
+  console.log(data.company_id);
+  console.log(data.date);
+  console.log(data.email);
+
+  //html = 'Hello <b>' + data.first_name + ' ' + data.last_name + '</b>,</ br></ br>You have successfully scheduled an appointment for <b>' + data.company_id + ' </b> on <b>' + data.date + '</b>.</ br> Please make sure this date is correct.</ br></ br>-Peter @ Emissary';
+  html = data.first_name + data.last_name + data.company_id + data.date + data.email;
+  html = JSON.stringify(html);
+  console.log(html);
+  var mailOptions = {
+    from: 'Peter@Emissary <pv.emissary@gmail.com>', // sender address
+    to: data.email, // receiver
+    subject: 'Successful appointment creation', // Subject line
+//    text: html.replace(/<(?:.|\n)*?>/gm, ''), // plaintext body
+    /** html body */
+    html: html
+  };
+
+  // send mail with defined transport object
+  transporter.sendMail(mailOptions, (error, info) => {
+    if(error) {
+      return console.log(error);
+    } else {
+      console.log('Message %s sent: %s', info.messageId, info.response);
+    }
+  });
 };
