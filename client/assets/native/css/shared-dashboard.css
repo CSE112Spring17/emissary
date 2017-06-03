@@ -21,7 +21,7 @@ body{
 }
 
 /** Begin: Check-In styles */
-.checkin-button {
+.topCheckinButton {
   box-sizing: border-box;
 }
 
