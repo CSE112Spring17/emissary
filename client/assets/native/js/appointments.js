@@ -26,6 +26,33 @@ $(document).ready(function(){
 
     $("#appt-list").html(compiledHtml);
     $('.save-btn').click(submitForm);
+
+    $('.closebtn').click(function() {
+      console.log("close");
+      document.getElementById("notification").style.display='none';
+    });
+
+    $('.button-yes').click(function() {
+      var apptId = $('.delete-appt').closest('.appt-row').attr('value');
+      console.log("delete");
+      $.ajax({
+        dataType:'json',
+        type: 'DELETE',
+        url:'/api/appointments/' + apptId,
+        success:function(response){
+          var updateAppts = getAppts();
+          var removeAppt = initializeAppts(updateAppts);
+          $("#appt-list").html(template(removeAppt));
+
+        }
+      });
+      document.getElementById("confirmation").style.display='none';
+    });
+
+    $('.button-no').click(function() {
+      console.log("not delete");
+      document.getElementById("confirmation").style.display='none';
+    });
     
    /***
      * Makes a get request to display list of appts
@@ -61,7 +88,7 @@ $(document).ready(function(){
         appts = initializeAppts(appts);
         $("#appt-list").html(template(appts));
         document.getElementById("appt-form").reset();
-    }
+        document.getElementById("confirmation").style.display='';    }
 
     /***
      * Makes a post request to update list of appts when adding a new employee
@@ -102,23 +129,15 @@ $(document).ready(function(){
 
       newAppt.date = jsDate(userDate,userTime);
       return newAppt;
+    }
+
+    function deleteAppt() {
+      
     } 
 
     $(document).on('click','.delete-appt',function(){
-      var apptId = $(this).closest('.appt-row').attr('value');
-      console.log("delete");
-      $.ajax({
-        dataType:'json',
-        type: 'DELETE',
-        url:'/api/appointments/' + apptId,
-        success:function(response){
-          var updateAppts = getAppts();
-          var removeAppt = initializeAppts(updateAppts);
-          $("#appt-list").html(template(removeAppt));
-
-        }
-      });
-
+      document.getElementById("confirmation").style.display='block';
+      
     });
 
 
