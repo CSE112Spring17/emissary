@@ -44,7 +44,11 @@ module.exports.template.create = function(req, res) {
                     if (err) {
                         return res.status(400).json({error: "Could Not Save"});
                     } else {
-                        Email.notifyAppointment(param);
+                        Email.notifyAppointment(param.first_name,
+                                                param.last_name,
+                                                param.company_id,
+                                                param.date,
+                                                param.email);
                         return res.status(200).json(a);
                     }
                 });

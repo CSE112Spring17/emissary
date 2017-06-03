@@ -56,24 +56,21 @@ exports.sendEmail = function(patientName, employees, done) {
 };
 
 // sendEmail: Send email to employees when visitorList is checked in.
-exports.notifyAppointment = function(data) {
+exports.notifyAppointment = function(fname, lname, company_id, date, email) {
   console.log('NOTIFY_NEW_APPOINTMENT');
-  console.log(data);
-  console.log(data.first_name);
-  console.log(data.last_name);
-  console.log(data.company_id);
-  console.log(data.date);
-  console.log(data.email);
+//  html = [
+//  'Hello <b>' + fname + ' ' + lname + '</b>,</ br>',
+//  '</ br>You have successfully scheduled an appointment for <b>' + company_id,
+//  ' </b> on <b>' + date + '</b>.</ br> Please make sure this date is correct.',
+//  '</ br></ br>-Peter @ Emissary'
+//  ].join('');
 
-  //html = 'Hello <b>' + data.first_name + ' ' + data.last_name + '</b>,</ br></ br>You have successfully scheduled an appointment for <b>' + data.company_id + ' </b> on <b>' + data.date + '</b>.</ br> Please make sure this date is correct.</ br></ br>-Peter @ Emissary';
-  html = data.first_name + data.last_name + data.company_id + data.date + data.email;
-  html = JSON.stringify(html);
   console.log(html);
   var mailOptions = {
     from: 'Peter@Emissary <pv.emissary@gmail.com>', // sender address
-    to: data.email, // receiver
+    to: email, // receiver
     subject: 'Successful appointment creation', // Subject line
-//    text: html.replace(/<(?:.|\n)*?>/gm, ''), // plaintext body
+    text: html.replace(/<(?:.|\n)*?>/gm, ''), // plaintext body
     /** html body */
     html: html
   };
