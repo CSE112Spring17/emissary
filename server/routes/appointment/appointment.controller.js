@@ -67,6 +67,22 @@ module.exports.template.getAll = function(req, res) {
         });
 };
 
+module.exports.template.getToday = function(req, res) {
+  var start = new Date();
+  start.setHours(0, 0, 0, 0);
+  var query =
+    {
+      company_id: req.params.id,
+      date: {$gte:start}
+    };
+  Appointment.find(query, function(err, result){
+    if(err){
+      return res.status(400).json(err);
+    }
+    return res.status(200).json(result);
+  });
+};
+
 module.exports.template.get = function(req, res) {
     Appointment.findOne({_id: req.params.id}, function(err, a) {
         if(err || !a)
@@ -76,6 +92,7 @@ module.exports.template.get = function(req, res) {
 };
 
 module.exports.template.update = function(req, res){
+    console.log("INSIDE UPDATE",req);
     Appointment.findOne({_id: req.params.id}, function (err, a) {
         if(err || !a)
             return res.status(401).json({error: "Could Not Find"});
@@ -101,6 +118,25 @@ module.exports.template.update = function(req, res){
             return res.status(200).json(a);
         });
     });
+};
+
+module.exports.template.updateCancelled = function(req, res){
+  Appointment.findOne({_id: req.body.id}, function (err, a) {
+    if(err || !a)
+    {
+      console.log(req);
+      return res.status(401).json({error: "Could Not Find"});
+    }
+    a.status = "Cancelled";
+    //TODO check if the date is taken already
+    a.save(function(err) {
+      if(err) {
+        return res.status(400).json({error: "Could Not Save"});
+      }
+      console.log("Cancellation confirmed");
+      return res.status(200).json(a);
+    });
+  });
 };
 
 module.exports.template.delete = function(req, res){

@@ -118,7 +118,7 @@ exports.create = function(param, callback){
     tomorrow.setDate(today.getDate()+1);
     tomorrow.setHours(0, 0, 0, 0);
 
-    var query=
+    var query =
     {
         company_id: company_id,
         first_name: first_name,
@@ -128,6 +128,17 @@ exports.create = function(param, callback){
     };
 
     Appointment.find(query, function(err, appointments){
+        var isWalkIn = true;
+        if(appointments.length > 0){
+          Appointment.findOneAndUpdate(query, {status: "show"}, function(err, doc){
+            if (err){
+              console.log(err);
+            }
+            else {
+              console.log("Successfully updated");
+            }
+          });
+        }
         var visitor =
         {
             company_id: company_id,
@@ -147,6 +158,15 @@ exports.create = function(param, callback){
                     list = new VisitorList();
                     list.visitors=[];
                     list.company_id = company_id;
+                    list.walk_ins = 0;
+                }
+                if(isWalkIn) {
+                  if(list.walk_ins) {
+                    list.walk_ins += 1;
+                  }
+                  else{
+                    list.walk_ins = 1;
+                  }
                 }
                 list.visitors.push(visitor);
                 list.save(function(err){
