@@ -17,4 +17,4 @@ deployment:
       - sudo /opt/google-cloud-sdk/bin/gcloud auth activate-service-account --key-file ${HOME}/gcloud-service-key.json
       - sudo /opt/google-cloud-sdk/bin/gcloud config set project $GCLOUD_PROJECT_ID
       - sudo /opt/google-cloud-sdk/bin/gcloud config set compute/zone $GCLOUD_INSTANCE_ZONE
-      - ssh $GCLOUD_DEV_CREDENTIALS 'cd /home/justin8chou/emissary && git pull && nvm use default && npm install && pm2 restart npm'
+      - ssh $GCLOUD_DEV_CREDENTIALS '~/deploy.sh'
