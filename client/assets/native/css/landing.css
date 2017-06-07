@@ -1,0 +1,90 @@
+.wrap {
+  background-color: #303641;
+  color: inherit;
+}
+
+#slider_wrapper {
+  display: table;
+  width: 100%;
+  height: 75vh;
+  margin: 0;
+  padding: 0;
+}
+#override_landing_slider-container {
+  width: 100%;
+  height: 100%;
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+}
+
+#override_landing_side-nav,
+#override_landing_side-logo {
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+#override_landing_side_nav_a1,
+#override_landing_side_nav_a2,
+#override_landing_side_nav_a3 {
+  font-weight: normal;
+  color: #01b2bd;
+  background-color: inherit;
+  border: none;
+  text-transform: capitalize;
+  display: inline-block;
+  height: 40px;
+  width: 120px;
+}
+
+#override_landing_side_nav_a4 {
+  color: #FFFFFF;
+  background-color: #01b2bd;
+  border-radius: 5px;
+  border: none;
+  text-transform: capitalize;
+  display: block;
+  height: 40px;
+  width: 120px;
+}
+
+#override_landing_side_nav_span1,
+#override_landing_side_nav_span2,
+#override_landing_side_nav_span3 {
+  color: #01b2bd;
+  background-color: inherit;
+  font-size: 16px;
+  text-transform: capitalize;
+}
+
+#override_landing_side_nav_span4 {
+  color: #FFFFFF;
+  background-color: #01b2bd;
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: capitalize;
+}
+
+.slide_h2 {
+  font-weight: bold;
+  font-size: 28px;
+  color: #01b2bd;
+  background-color: inherit;
+}
+
+#override_slide_h2_small1,
+#override_slide_h2_small2,
+#override_slide_h2_small3 {
+  font-weight: bold;
+  font-size: 24px;
+  color: #000000;
+  background-color: inherit;
+}
+
+#override_slide_p1,
+#override_slide_p2,
+#override_slide_p3 {
+  font-size: 20px;
+  color: #000000;
+  background-color: inherit;
+}

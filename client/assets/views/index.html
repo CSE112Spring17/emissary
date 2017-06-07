@@ -4,17 +4,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Neon Admin Panel"/>
-    <meta name="author" content=""/>
 
     <link rel="icon" href="assets/images/logo-emissary.png">
 
-    <title>Emissary</title>
+    <title>OMNI</title>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.css">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/font-icons/entypo/css/entypo.css">
     <link rel="stylesheet" href="assets/css/neon.css">
+    <link rel="stylesheet" href="assets/native/css/landing.css">
 
     <!--[if lt IE 9]>
     <script src="assets/js/ie8-responsive-file-warning.js" async></script><![endif]-->
@@ -28,256 +28,182 @@
 
 </head>
 <body>
-
-<div class="wrap">
-
+  <div class="wrap">
     <!-- Logo and Navigation -->
     <div class="site-header-container container">
-
         <div class="row">
-
             <div class="col-md-12">
-
                 <header class="site-header">
-
-                    <section class="site-logo">
-
+                    <section id="override_landing_side-logo" class="site-logo">
                         <a href="index.html">
                             <img src="assets/images/logo@2x.png" width="165"/>
                         </a>
-
                     </section>
-
-                    <nav class="site-nav">
-
+                    <nav id="override_landing_side-nav" class="site-nav">
                         <ul class="main-menu hidden-xs" id="main-menu">
-                            <li class="active">
-                                <a href="index.html">
-                                    <span>Home</span>
+                            <li>
+                                <a id="override_landing_side_nav_a1" href="#features">
+                                    <span id="override_landing_side_nav_span1"><i class="entypo-book-open"></i>Features</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="#features">
-                                    <span>Features</span>
+                                <a id="override_landing_side_nav_a2" href="#pricing">
+                                    <span id="override_landing_side_nav_span2"><i class="entypo-basket"></i>Pricing</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="#pricing">
-                                    <span>Pricing</span>
+                                <a id="override_landing_side_nav_a3" href="login.html">
+                                    <span id="override_landing_side_nav_span3"><i class="entypo-login"></i>Login</span>
                                 </a>
                             </li>
                             <li>
-                                <a href="login.html">
-                                    <span>Login</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="signup.html">
-                                    <span>Sign-Up</span>
+                                <a id="override_landing_side_nav_a4" href="signup.html">
+                                    <span id="override_landing_side_nav_span4"><i class="entypo-user"></i>Sign-Up</span>
                                 </a>
                             </li>
                         </ul>
-
-
                         <div class="visible-xs">
-
                             <a href="#" class="menu-trigger">
                                 <i class="entypo-menu"></i>
                             </a>
-
                         </div>
                     </nav>
-
                 </header>
-
             </div>
-
         </div>
-
     </div>
     <!-- Main Slider --><a name="features"></a>
-    <section class="slider-container"
-             style="background-image: url(assets/images/slide-img-1-bg.png);">
+    <div id="slider_wrapper">
+      <section id="override_landing_slider-container" class="slider-container"
+               style="background-image: url(assets/images/slide-img-2-bg.png);">
+          <div class="container">
+              <div class="row">
+                  <div class="col-md-12">
+                      <div class="slides">
+                          <!-- Slide 1 -->
+                          <div class="slide">
+                              <div class="slide-content">
+                                  <h2 class="slide_h2">
+                                      <small id="override_slide_h2_small1">OMNI</small>
+                                      Welcome your guests
+                                  </h2>
+                                  <p id="override_slide_p1">
+                                      OMNI welcomes visitors with a simple,<br/>
+                                      yet effective check-in process. It is all<br/>
+                                      about making each step simpler and more efficient.
+                                  </p>
+                              </div>
+                              <div class="slide-image">
+                                  <a href="#">
+                                      <img src="assets/images/slide-img-1.png"
+                                           class="img-responsive"/>
+                                  </a>
+                              </div>
+                          </div>
+                          <!-- Slide 2 -->
+                          <div class="slide"
+                               data-bg="assets/images/slide-img-1-bg.png">
+                              <div class="slide-image">
+                                  <a href="#">
+                                      <img src="assets/images/slide-img-2.png"
+                                           class="img-responsive"/>
+                                  </a>
+                              </div>
+                              <div class="slide-content text-right">
+                                  <h2 class="slide_h2">
+                                      <small id="override_slide_h2_small2">OMNI</small>
+                                      Dashboard
+                                  </h2>
+                                  <p id="override_slide_p2">
+                                      Manage employee access, patient information<br/>
+                                      and company settings right from our dashboard.
+                                  </p>
+                              </div>
+                          </div>
+                          <!-- Slide 3 -->
+                          <div class="slide">
+                              <div class="slide-content">
+                                  <h2 class="slide_h2">
+                                      <small id="override_slide_h2_small3">OMNI</small>
+                                      Know who has arrived
+                                  </h2>
+                                  <p id="override_slide_p3">
+                                      Your team will be able to effortlessly identify<br/>
+                                      who has arrived. They will then have more time<br/>
+                                      to work on the essential tasks.<br/>
+                                      Let us automate “check-in” for you!
+                                  </p>
+                              </div>
 
-        <div class="container">
+                              <div class="slide-image">
+                                  <a href="#">
+                                      <img src="assets/images/slide-img-3.png"
+                                           class="img-responsive"/>
+                                  </a>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </section>
+    </div>
 
-            <div class="row">
-
-                <div class="col-md-12">
-
-                    <div class="slides">
-
-                        <!-- Slide 1 -->
-                        <div class="slide">
-
-                            <div class="slide-content">
-                                <h2>
-                                    <small>Emissary</small>
-                                    Welcome your guests
-                                </h2>
-
-                                <p>
-                                    Emissary welcomes visitors with a simple,<br/>
-                                    yet effective check-in process. It is all<br/>
-                                    about making each step simpler and more efficient.
-                                </p>
-                            </div>
-
-                            <div class="slide-image">
-
-                                <a href="#">
-                                    <img src="assets/images/slide-img-1.png"
-                                         class="img-responsive"/>
-                                </a>
-                            </div>
-
-                        </div>
-
-                        <!-- Slide 2 -->
-                        <div class="slide"
-                             data-bg="assets/images/slide-img-1-bg.png">
-
-                            <div class="slide-image">
-
-                                <a href="#">
-                                    <img src="assets/images/slide-img-2.png"
-                                         class="img-responsive"/>
-                                </a>
-                            </div>
-
-                            <div class="slide-content text-right">
-                                <h2>
-                                    <small>Emissary</small>
-                                    Dashboard
-                                </h2>
-
-                                <p>
-                                    Manage employee access, patient information<br/>
-                                    and company settings right from our dashboard.
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                        <!-- Slide 3 -->
-                        <div class="slide">
-
-                            <div class="slide-content">
-                                <h2>
-                                    <small>Emissary</small>
-                                    Know who has arrived
-                                </h2>
-
-                                <p>
-                                    Your team will be able to effortlessly identify<br/>
-                                    who has arrived. They will then have more time<br/>
-                                    to work on the essential tasks.<br/>
-                                    Let us automate “check-in” for you!
-                                </p>
-                            </div>
-
-                            <div class="slide-image">
-
-                                <a href="#">
-                                    <img src="assets/images/slide-img-3.png"
-                                         class="img-responsive"/>
-                                </a>
-                            </div>
-
-                        </div>
-
-                        <!-- Slider navigation -->
-                        <div class="slides-nextprev-nav">
-                            <a href="#" class="prev">
-                                <i class="entypo-left-open-mini"></i>
-                            </a>
-                            <a href="#" class="next">
-                                <i class="entypo-right-open-mini"></i>
-                            </a>
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
     <!-- Features Blocks -->
     <section class="features-blocks">
-
         <div class="container">
-
             <div class="row vspace">
                 <!-- "vspace" class is added to distinct this row -->
-
                 <div class="col-sm-4">
-
                     <div class="feature-block">
                         <h3>
                             <i class="entypo-cog"></i>
                             Customizable
                         </h3>
-
                         <p>
                             Change the look and feel of your forms
                             through our easy to use system.
                         </p>
                     </div>
-
                 </div>
-
                 <div class="col-sm-4">
-
                     <div class="feature-block">
                         <h3>
                             <i class="entypo-gauge"></i>
                             Slack
                         </h3>
-
                         <p>
                             Integrate your notifications into Slack,
                             so every part of your workflow is
                             connected.
                         </p>
                     </div>
-
                 </div>
 
                 <div class="col-sm-4">
-
                     <div class="feature-block">
                         <h3>
                             <i class="entypo-lifebuoy"></i>
                             24/7 Support
                         </h3>
-
                         <p>
                             Enjoy ease of mind knowing that our customer support
                             team is readily available at all times.
                         </p>
                     </div>
-
                 </div>
-
             </div>
-
             <!-- Separator -->
             <div class="row">
                 <div class="col-md-12">
                     <hr/>
                 </div>
             </div>
-
         </div>
-
     </section>
     <a name="pricing"></a>
     <!-- Pricing -->
     <section class="portfolio-widget">
-
         <div class="container">
             <div class="row">
                 <div class="col-sm-2">
@@ -295,7 +221,7 @@
                                     <ul>
                                         <h5></h5>
                                         <li>
-                                            <p>Try Emissary out for two weeks</p>
+                                            <p>Try OMNI out for two weeks</p>
                                         </li>
                                         <li>
                                             <p>Easy sign up process, be set up in no time</p>
@@ -340,38 +266,28 @@
                     </div>
                 </div>
             </div>
-
     </section>
     <!-- Call for Action Button -->
     <div class="container">
         <div class="row vspace">
             <div class="col-md-12">
-
                 <div class="callout-action">
-                    <h2>Sign up for a free trial of Emissary now!</h2>
-
+                    <h2>Sign up for a free trial of OMNI now!</h2>
                     <div class="callout-button">
                         <a href="signup.html"
                            class="btn btn-secondary">Sign-Up</a>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
     <!-- Testimonails -->
     <section class="testimonials-container">
-
         <div class="container">
-
             <div class="col-md-12">
-
                 <div class="testimonials carousel slide" data-interval="8000">
-
                     <div class="carousel-inner">
-
                         <div class="item active">
-
                             <blockquote>
                                 <p>
                                     Perfection.
@@ -381,11 +297,8 @@
                                     Apple
                                 </small>
                             </blockquote>
-
                         </div>
-
                         <div class="item">
-
                             <blockquote>
                                 <p>
                                     Truly remarkable.
@@ -395,11 +308,8 @@
                                     Google
                                 </small>
                             </blockquote>
-
                         </div>
-
                         <div class="item">
-
                             <blockquote>
                                 <p>
                                     I bought ten!
@@ -408,82 +318,51 @@
                                     <cite>Bill Gates</cite> - CEO at Microsoft
                                 </small>
                             </blockquote>
-
                         </div>
-
                     </div>
-
                 </div>
-
             </div>
-
         </div>
-
     </section>
-
-
     <!-- Footer Widgets -->
     <section class="footer-widgets">
-
         <div class="container">
-
             <div class="row">
-
                 <div class="col-sm-6">
-
                     <a href="#">
                         <img src="assets/images/logo@2x.png" width="100"/>
                     </a>
-
                     <p>
                         Checking In Made Simple.
                     </p>
-
                 </div>
-
                 <div class="col-sm-3">
-
                     <h5>Address</h5>
-
                     <p>
                         UC San Diego <br/>
                         9500 Gilman Dr., <br/>
                         La Jolla, CA 92093
                     </p>
-
                 </div>
-
                 <div class="col-sm-3">
-
                     <h5>Contact</h5>
-
                     <p>
                         Phone: +1 (858) 123-456 <br/>
                         Fax: +1 (858) 654-321 <br/>
-                        info@emissary.com
+                        info@omni.com
                     </p>
-
                 </div>
-
             </div>
-
         </div>
-
     </section>
-
     <!-- Site Footer -->
     <footer class="site-footer">
-
         <div class="container">
-
             <div class="row">
-
                 <div class="col-sm-6">
-                    Copyright &copy; Emissary - All Rights Reserved.
+                    Copyright &copy; OMNI - All Rights Reserved.
                 </div>
-
                 <div class="col-sm-6">
-
                     <ul class="social-networks text-right">
                         <li>
                             <a href="#">
@@ -501,22 +380,17 @@
                             </a>
                         </li>
                     </ul>
-
                 </div>
-
             </div>
-
         </div>
-
     </footer>
 </div>
-</body>
 <script src="assets/js/jquery-1.11.3.min.js"></script>
+<script src="assets/js/bootstrap.min.js"></script>
 <script src="assets/js/gsap/TweenMax.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.js"></script>
 <script src="assets/js/joinable.js"></script>
 <script src="assets/js/resizeable.js"></script>
 <script src="assets/js/neon-slider.js"></script>
 <script src="assets/js/neon-custom.js"></script>
-
+</body>
 </html>
