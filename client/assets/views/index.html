@@ -36,7 +36,7 @@
                 <header class="site-header">
                     <section id="override_landing_side-logo" class="site-logo">
                         <a href="index.html">
-                            <img src="assets/images/logo@2x.png" width="165"/>
+                            <img src="assets/images/logo-omni2-white.png" width="165"/>
                         </a>
                     </section>
                     <nav id="override_landing_side-nav" class="site-nav">
@@ -72,7 +72,7 @@
             </div>
         </div>
     </div>
-    <!-- Main Slider --><a name="features"></a>
+    <!-- Main Slider -->
     <div id="slider_wrapper">
       <section id="override_landing_slider-container" class="slider-container"
                style="background-image: url(assets/images/slide-img-2-bg.png);">
@@ -149,58 +149,91 @@
       </section>
     </div>
 
-    <!-- Features Blocks -->
-    <section class="features-blocks">
-        <div class="container">
-            <div class="row vspace">
-                <!-- "vspace" class is added to distinct this row -->
-                <div class="col-sm-4">
-                    <div class="feature-block">
-                        <h3>
-                            <i class="entypo-cog"></i>
-                            Customizable
-                        </h3>
-                        <p>
+    <!-- Features Blocks --><a name="features"></a>
+    <div id="features-wrap">
+      <section class="features-blocks">
+          <div class="container">
+              <div class="row vspace">
+                  <!-- "vspace" class is added to distinct this row -->
+                  <div id="override_feature_block1" class="feature-block col-sm-10 col-centered container">
+                    <div class="row">
+                      <div class="override_features_icons col-sm-3">
+                        <div id="override_features_cog" class="entypo-cog"></div>
+                      </div>
+                      <div class="text-wrapper col-sm-9">
+                        <div id="override_features_text1">
+                          Customizable<br />
+                          <p id="override_features_p1">
                             Change the look and feel of your forms
                             through our easy to use system.
-                        </p>
+                          </p>
+                        </div>
+                      </div>
                     </div>
-                </div>
-                <div class="col-sm-4">
-                    <div class="feature-block">
-                        <h3>
-                            <i class="entypo-gauge"></i>
-                            Slack
-                        </h3>
-                        <p>
-                            Integrate your notifications into Slack,
-                            so every part of your workflow is
-                            connected.
-                        </p>
+                  </div>
+                  <div id="override_feature_block2" class="feature-block col-sm-10 col-centered container">
+                    <div class="row">
+                      <div class="override_features_icons col-sm-3">
+                        <div id="override_features_flow-tree" class="entypo-flow-tree"></div>
+                      </div>
+                      <div class="text-wrapper col-sm-9">
+                        <div id="override_features_text2">
+                          Omni-Channelled<br />
+                          <p id="override_features_p2">
+                            Integrate your notifications into standard Email,
+                            Messenger, iOS, Telegram, and SMS;
+                            and live support with Slack.
+                          </p>
+                        </div>
+                      </div>
                     </div>
-                </div>
+                  </div>
+                  <div id="override_feature_block3" class="feature-block col-sm-10 col-centered container">
+                    <div class="row">
+                      <div class="override_features_icons col-sm-3" style="position: relative;">
+                        <div style="position: absolute; top: 50%; transform: translate(0, -50%); width: 100%">
+                          <div id="override_features_monitor" class="entypo-monitor"></div>
+                          <div id="override_features_mobile" class="entypo-mobile"></div>
+                        </div>
+                      </div>
+                      <div class="text-wrapper col-sm-9">
+                        <div id="override_features_text3">
+                          Mobile &amp; Desktop<br />
+                          <p id="override_features_p3">
+                            Have your clients check-in either through standard
+                            desktop browsers or on your iOS mobile app.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div id="override_feature_block4" class="feature-block col-sm-10 col-centered container">
+                    <div class="row">
+                      <div class="override_features_icons col-sm-3">
+                        <div id="override_features_chart-line" class="entypo-chart-line"></div>
+                      </div>
+                      <div class="text-wrapper col-sm-9">
+                        <div id="override_features_text4">
+                          Real-time Analytics<br />
+                          <p id="override_features_p4">
+                            Track your company's analytics, with real-time information
+                            on your clients and customers.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+              </div>
+              <!-- Separator -->
+              <div class="row">
+                  <div class="col-md-12">
+                      <hr/>
+                  </div>
+              </div>
+          </div>
+      </section>
+    </div>
 
-                <div class="col-sm-4">
-                    <div class="feature-block">
-                        <h3>
-                            <i class="entypo-lifebuoy"></i>
-                            24/7 Support
-                        </h3>
-                        <p>
-                            Enjoy ease of mind knowing that our customer support
-                            team is readily available at all times.
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <!-- Separator -->
-            <div class="row">
-                <div class="col-md-12">
-                    <hr/>
-                </div>
-            </div>
-        </div>
-    </section>
     <a name="pricing"></a>
     <!-- Pricing -->
     <section class="portfolio-widget">
@@ -282,45 +315,51 @@
         </div>
     </div>
     <!-- Testimonails -->
-    <section class="testimonials-container">
+    <section id="override_testimonials-container" class="testimonials-container">
         <div class="container">
-            <div class="col-md-12">
-                <div class="testimonials carousel slide" data-interval="8000">
-                    <div class="carousel-inner">
-                        <div class="item active">
-                            <blockquote>
-                                <p>
-                                    Perfection.
-                                </p>
-                                <small>
-                                    <cite>Steve Jobs</cite> - Co-Founder at
-                                    Apple
-                                </small>
-                            </blockquote>
-                        </div>
-                        <div class="item">
-                            <blockquote>
-                                <p>
-                                    Truly remarkable.
-                                </p>
-                                <small>
-                                    <cite>Larry Page</cite> - Co-Founder at
-                                    Google
-                                </small>
-                            </blockquote>
-                        </div>
-                        <div class="item">
-                            <blockquote>
-                                <p>
-                                    I bought ten!
-                                </p>
-                                <small>
-                                    <cite>Bill Gates</cite> - CEO at Microsoft
-                                </small>
-                            </blockquote>
+            <div class="col-md-9 col-centered container">
+              <div class="row">
+                <div class="col-md-4">
+                    <img src="assets/images/petervenkman.png" style="max-width: 200px; display: block; margin: 0 auto;"/>
+                </div>
+                <div class="col-md-8">
+                    <div class="testimonials carousel slide" data-interval="8000" style=" padding-top: 40px;">
+                        <div class="carousel-inner">
+                            <div class="item active">
+                                <blockquote>
+                                    <p>
+                                        It's Hotness<sup>3</sup>.
+                                    </p>
+                                    <small>
+                                        <cite>Peter Venkman</cite> - Cowboy Astronaut Trillionaire
+                                    </small>
+                                </blockquote>
+                            </div>
+                            <div class="item">
+                                <blockquote>
+                                    <p>
+                                        Truly remarkable.
+                                    </p>
+                                    <small>
+                                        <cite>Larry Page</cite> - Co-Founder at
+                                        Google
+                                    </small>
+                                </blockquote>
+                            </div>
+                            <div class="item">
+                                <blockquote>
+                                    <p>
+                                        I bought ten!
+                                    </p>
+                                    <small>
+                                        <cite>Bill Gates</cite> - CEO at Microsoft
+                                    </small>
+                                </blockquote>
+                            </div>
                         </div>
                     </div>
                 </div>
+              </div>
             </div>
         </div>
     </section>
@@ -330,7 +369,7 @@
             <div class="row">
                 <div class="col-sm-6">
                     <a href="#">
-                        <img src="assets/images/logo@2x.png" width="100"/>
+                        <img src="assets/images/logo-omni2-white.png" width="120"/>
                     </a>
                     <p>
                         Checking In Made Simple.
