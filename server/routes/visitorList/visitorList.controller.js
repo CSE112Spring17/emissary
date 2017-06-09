@@ -130,7 +130,7 @@ exports.create = function(param, callback){
     Appointment.find(query, function(err, appointments){
         var isWalkIn = true;
         if(appointments.length > 0){
-          Appointment.findOneAndUpdate(query, {status: "show"}, function(err, doc){
+          Appointment.findOneAndUpdate(query, {status: "Show"}, function(err, doc){
             if (err){
               console.log(err);
             }

@@ -19,6 +19,7 @@ var MY_SLACK_WEBHOOK_URL = 'https://hooks.slack.com/services/T0NUV4URX/B0NURQUSF
 var slack = require('slack-notify')(MY_SLACK_WEBHOOK_URL);
 //var oauthserver = require('oauth2-server');
 var newrelic = require('newrelic');
+var appointmentController = require('./routes/appointment/appointment.controller.js');
 
 
 /*
@@ -67,7 +68,12 @@ var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function callback () {
     console.log("Connected to mongolab");
+    setInterval(loop,300000);
 });
+
+function loop() {
+  appointmentController.template.markNoShow();
+}
 
 /*
  * Express configuration.
@@ -137,6 +143,10 @@ app.get('/admin-settings', function(req,res){
 app.get('/index', function(req,res){
   res.sendFile(path.join(__dirname,'../dist/assets/views/index.html'))
 });
+app.get('/appointment_history', function(req,res){
+  res.sendFile(path.join(__dirname,'../dist/assets/views/appointment_history.html'))
+});
+
 app.post('/calendarData', function(req, res) {
   var Appointment = require('./models/Appointment');
   var company_id = req.body.company_id;

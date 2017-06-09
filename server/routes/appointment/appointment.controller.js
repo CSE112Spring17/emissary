@@ -16,6 +16,7 @@
  * when front end is served from a something other than our app server.
  */
 var Appointment = require('../../models/Appointment');
+var VisitorList = require('../../models/VisitorList');
 var Email = require('../../notification/email');
 
 /****** Company TEMPLATE ROUTES ******/
@@ -59,12 +60,10 @@ module.exports.template.create = function(req, res) {
 };
 
 module.exports.template.getAll = function(req, res) {
-    Appointment.find({company_id: req.params.id}, function(err, result){
-            if(err){
-                return res.status(400).json(err);
-            }
-            return res.status(200).json(result);
-        });
+    Appointment.find({company_id: req.params.id}).sort([['date', 'descending']]).exec(function (err,result){
+      if(err) return res.status(400).json({error: "Could Not Save"});
+      return res.status(200).json(result);
+    });
 };
 
 module.exports.template.getToday = function(req, res) {
@@ -73,7 +72,8 @@ module.exports.template.getToday = function(req, res) {
   var query =
     {
       company_id: req.params.id,
-      date: {$gte:start}
+      date: {$gte:start},
+      status: {$exists: false}
     };
   Appointment.find(query, function(err, result){
     if(err){
@@ -151,4 +151,65 @@ module.exports.template.delete = function(req, res){
             }
         });
     });
+};
+
+module.exports.template.markNoShow = function(){
+  console.log("INSIDE mark NOSHOW");
+  var time = new Date();
+  time.setMinutes(time.getMinutes() - 5);
+  var query =
+  {
+    status: {$exists: false},
+    date: {$lte:time},
+  };
+  Appointment.find(query, function(err, result){
+    if(err){
+      return res.status(400).json(err);
+    }
+    result.forEach(function(element){
+      element.status = "No Show";
+      element.save(function (err){
+        if (err){
+          return res.status(400).json(err);
+        }
+      });
+    });
+  });
+};
+
+module.exports.template.getStats = function(req, res){
+
+  var data = [];
+
+  Appointment.find({company_id: req.params.id,status: 'no show'}, function(err, results) {
+    if(err)
+      res.status(400).json({error: "Could Not Find"});
+    data.push({status: 'no show',count: results.length});
+    Appointment.find({company_id: req.params.id,status: 'show'}, function(err, results) {
+      if(err)
+        res.status(400).json({error: "Could Not Find"});
+      data.push({status: 'show',count: results.length});
+      Appointment.find({company_id: req.params.id,status: 'cancelled'}, function(err, results) {
+        if(err)
+          res.status(400).json({error: "Could Not Find"});
+        data.push({status: 'cancelled',count: results.length});
+        VisitorList.findOne(
+          {company_id: req.params.id},
+          function(err, list) {
+            if (err)
+              return callback({error: "an error occured while finding"}, null);
+            if (list == null) {
+              list = new VisitorList();
+              list.visitors = [];
+              list.company_id = company_id;
+              list.walk_ins = 0;
+              list.save();
+            }
+
+            data.push({status: 'walk-ins', count: list.walk_ins});
+            return res.status(200).json(data);
+          });
+      });
+    });
+  });
 };
