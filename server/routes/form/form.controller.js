@@ -5,16 +5,16 @@
  */
 var express = require('express');
 var router = express.Router();
-
 var SubmittedForm = require('../../models/form/SubmittedForm');
 var mongoose = require('mongoose');
+var ObjectId = mongoose.Types.ObjectId;
 var TemplateForm = require('../../models/form/FormTemplate');
 
 /********** FORM TEMPLATE ROUTES **********/
 module.exports.template = {};
 
 module.exports.template.findByCompanyId =  function(req, res) {
-  TemplateForm.findOne({'_admin_id' : req.params.id}, function(err, template) {
+  TemplateForm.find({'company_id' : new ObjectId(req.params.id)}, function(err, template) {
     if(err)
       res.status(400).json({error: "There was an error finding the template form."});
     else
@@ -70,11 +70,68 @@ function updateWithAdminId(req,res){
 }
 
 module.exports.template.create =  function(req, res) {
-  var newTemplate = new TemplateForm();
-  newTemplate._admin_id = new mongoose.Types.ObjectId(req.body._admin_id);
-  newTemplate.template = req.body.template;
+  
+  //make sure all parameters are there
+  if(!("name" in req.body) || !("company_id" in req.body) || !("format" in req.body) ){
+    res.status(400).json({error: "Body must contain keys: name: company_id, and format"});
+    return;
+  }
 
-  newTemplate.save(function(err, template) {
+  
+  var format = req.body.format; //request body
+  var to_store = [format.length]; //will store the object
+
+  //set up the format for storing
+  for (var i=0; i<format.length; i++) {
+    var required_val;
+    var label_val;
+    var type_val;
+    //set required
+    if("required" in format[i]){
+      required_val = format[i].required;
+    }else{
+      required_val = false;
+    }
+
+    //set label
+    label_val = format[i].label;
+
+    //set type
+    if(format[i].type == 'text'){
+      if(format[i].subtype != 'text' && format[i].subtype != 'email' && format[i].subtype != 'tel'){
+        res.status(400).json({error: "We only support text, email, and tel subtypes of text as of now"});
+        return;
+      }
+      type_val = format[i].subtype
+    }else if(format[i].type == 'date' || format[i].type == 'number'){
+      type_val = format[i].type;
+    }else{
+      res.status(400).json({error: "We only support text(text, email, tel), date, and number types as of now"});
+      return;
+    }
+
+    to_store[i] = {
+      type: type_val,
+      label: label_val,
+      required: required_val
+    }
+  }
+
+  //set up full object for storing
+  var storing_object = {
+    company_id : new ObjectId(req.body.company_id),
+    name: req.body.name,
+    format: to_store
+  }
+
+  console.log(storing_object);
+  
+   var newTemplate = new TemplateForm();
+   newTemplate.company_id = new mongoose.Types.ObjectId(storing_object.company_id);
+   newTemplate.format = req.body.format;
+   newTemplate.name = req.body.name;
+
+   newTemplate.save(function(err, template) {
     if(err)
         res.status(400).json(err);
     else
