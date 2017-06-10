@@ -21,6 +21,7 @@ var appointmentSchema = mongoose.Schema({
     date: {type: Date, required: true},
     provider_name: {type: String, required: true},
     company_id: { type: Schema.Types.ObjectId, ref: 'Company', required: true },
+    status: {type: String, required: false}
 });
 
 var visitorSchema  = new Schema({
@@ -30,13 +31,14 @@ var visitorSchema  = new Schema({
     phone_number: { type: String, required: true },
     checkin_time: { type : Date, default: Date.now, required: true },
     appointments: {type: [appointmentSchema]},
-    additional_info: {}
+    additional_info: {},
 });
 
 
 var visitorListSchema   = new Schema({
     company_id: { type: Schema.Types.ObjectId, ref: 'Company', required: true },
-    visitors: {type: [visitorSchema], default: []}
+    visitors: {type: [visitorSchema], default: []},
+    walk_ins: {type: Number, required: true}
 });
 
 module.exports = mongoose.model('visitorList', visitorListSchema);
