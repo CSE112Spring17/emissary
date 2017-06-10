@@ -1,0 +1,2995 @@
+[
+  {
+    "__docId__": 0,
+    "kind": "file",
+    "name": "js/appointments.js",
+    "content": "//$(document).ready(function(){\n\n    var companyData = JSON.parse(localStorage.getItem(\"currentCompany\"));\n    var myCompanyId = companyData._id;\n    var curUser = JSON.parse(localStorage.getItem('currentUser'));\n\n    $('#user-name').text(curUser.first_name + ' ' +  curUser.last_name);\n\n    var appts = getAppts();\n   /***\n     * initializ a list of appts\n     * @param none\n     * @returns displays the appt list\n     */\n    function initializeAppts (appts){\n      appts.sort(function(a,b){\n        return new Date(a.date) - new Date(b.date);\n      });\n      for(var i = 0, len = appts.length; i < len; i++){\n        appts[i].fullDate = formatDate(appts[i].date.toString());\n        appts[i].appointmentTime = formatTime(appts[i].date.toString());\n      }\n      return appts;\n    }\n\n    appts = initializeAppts(appts);\n    var source = $(\"#appt-list-template\").html();\n    var template = Handlebars.compile(source);\n    var compiledHtml = template(appts);\n\n    $(\"#appt-list\").html(compiledHtml);\n    $('.save-btn').click(submitForm);\n    \n   /***\n     * Makes a get request to display list of appts\n     * @param none\n     * @returns displays the appt list\n     */\n    function getAppts() {\n       var json;\n       $.ajax({\n           dataType: 'json',\n           type: 'GET',\n           data: $('#response').serialize(),\n           async: false,\n           url: '/api/appointments/company/' + myCompanyId,\n           success: function(response) {\n               json = response;\n               console.log(response);\n           }\n       });\n       return json;\n   }\n\n   /***\n     * When a patient submits their form\n     * @param none\n     * @returns updates the appt list\n     */\n    function submitForm(){\n        var d = grabFormElements();\n        console.log(d);\n        updateApptList(d);\n        appts = getAppts();\n        appts = initializeAppts(appts);\n        $(\"#appt-list\").html(template(appts));\n        document.getElementById(\"appt-form\").reset();\n    }\n\n    /***\n     * Makes a post request to update list of appts when adding a new employee\n     * @param none\n     * @returns updates the appt list\n     */\n   function updateApptList(obj) {\n      $.ajax({\n        dataType: 'json',\n           type: 'POST',\n           data: obj,\n           async: false,\n           url: '/api/appointments/',\n           success: function(response) {\n                appts.push(response);\n                console.log(response);\n           }\n      });\n    }\n\n\n    /***\n     * Grabs elements from the check in and puts it into an object\n     * @param none\n     * @returns new appt object\n     */\n    function grabFormElements(){\n      var newAppt = {};\n      var userTime,userDate;\n      newAppt.company_id = myCompanyId;\n      newAppt.first_name= $('#appt-first').val();\n      newAppt.last_name = $('#appt-last').val();\n      newAppt.phone_number = $('#appt-number').val();\n      newAppt.provider_name = $('#appt-provider').val();\n\n      userDate = $('#appt-date').val();\n      userTime = $('#appt-time').val();\n\n      newAppt.date = jsDate(userDate,userTime);\n      return newAppt;\n    } \n\n    $(document).on('click','.delete-appt',function(){\n      var apptId = $(this).closest('.appt-row').attr('value');\n      console.log(\"delete\");\n      $.ajax({\n        dataType:'json',\n        type: 'DELETE',\n        url:'/api/appointments/' + apptId,\n        success:function(response){\n          var updateAppts = getAppts();\n          var removeAppt = initializeAppts(updateAppts);\n          $(\"#appt-list\").html(template(removeAppt));\n\n        }\n      });\n\n    });\n\n\n    /********************* FUNCTIONS TO FORMAT JAVASCRIPT DATES ********************/\n    /***\n     * FUNCTIONS TO FORMAT JAVASCRIPT DATES\n     * @param none\n     * @returns a formated dates\n     */\n    function formatDate(date){\n      var d = new Date(Date.parse(date));\n      var mm = d.getMonth() + 1;\n      var yyyy = d.getFullYear();\n      var dd = d.getDate();\n      //var monthArray = [\"Jan\", \"Feb\", \"Mar\", \"Apr\", \"May\", \"Jun\", \"Jul\", \"Aug\",\"Sep\",\"Nov\",\"Dec\"];\n      if(dd < 10){\n        dd = '0' + dd;\n      }\n      if(mm < 10){\n        mm = '0' + mm;\n      }\n      //console.log(monthArray[mm]);\n      return  mm + '/' + dd + '/' +  + yyyy;\n    }\n\n    /***\n     * FUNCTIONS TO FORMAT A PHONE NUMBER\n     * @param none\n     * @returns a formated phone number\n     */\n    function formatNumber(number){\n      return '(' + number.substr(0,3) + ')' + number.substr(3,3) + '-' + number.substr(6,4);\n    }\n\n    //FUNCTION TO FORMAT DATE OBJECT IN JS\n\n     /***\n     * FUNCTION TO FORMAT DATE OBJECT IN JS\n     * @param none\n     * @returns a formated dates in JSON\n     */\n    function jsDate(date,time){\n      var jsDate = reFormatDate(date);\n      var jsTime = reFormatTime(time);\n      jsDateObj = jsDate + ' ' + jsTime;\n      return jsDateObj;\n    }\n\n    //FUNCTION TO FORMAT DATE TO JS FOR ROBOTS\n\n     /***\n     * FUNCTION TO FORMAT DATE TO JS FOR ROBOTS\n     * @param none\n     * @returns a formated date\n     */\n    function reFormatDate(date){\n      var d = new Date(Date.parse(date));\n      var mm = d.getMonth() + 1;\n      var yyyy = d.getFullYear();\n      var dd = d.getDate();\n\n      if(dd < 10){\n        dd = '0' + dd;\n      }\n      if(mm < 10){\n        mm = '0' + mm;\n      }\n      return  yyyy + '-' + mm +'-' + dd;\n    }\n\n\n    //FUNCTION TO FORMAT TIME TO JS FOR ROBOTS\n\n     /***\n     * FUNCTION TO FORMAT TIME TO JS FOR ROBOTS\n     * @param none\n     * @returns a formated date\n     */\n    function reFormatTime(time){\n      var ampm = time.substr(-2,2);\n      var formattedTime;\n      var formattedHour;\n      var colon = time.indexOf(\":\");\n\n      if(ampm === \"PM\"){\n        formattedHour = time.substr(0,2);\n\n        if(formattedHour == '12')\n          formattedHour = 12;  \n        else\n          formattedHour = 12 + parseInt(time.substr(0,2));\n\n        formattedTime = formattedHour + time.substr(colon,3) + \":00\";\n      }\n      else{\n\n        formattedHour = parseInt(time.substr(0,2));\n        if(formattedHour < 10){\n          formattedHour = '0' + formattedHour;\n        }\n        if(formattedHour == 12){\n          formattedHour = '00';\n        }\n        formattedTime = formattedHour + time.substr(colon,3) + ':00';\n      }\n\n      return formattedTime;\n    }\n\n\n    //FUNCTION TO FORMAT TIME TO AM AND PM FOR HUMANS\n\n     /***\n     * FUNCTION TO FORMAT TIME TO AM AND PM FOR HUMANS\n     * @param none\n     * @returns a formated date\n     */\n    function formatTime(time){\n        var currentTime = new Date(Date.parse(time));\n        var hour = currentTime.getHours();\n        var minute = currentTime.getMinutes();\n\n        if(minute < 10) {\n            minute = '0' + minute;\n        }\n\n        if(hour >= 13){\n            hour = hour-12;\n            currentTime = hour + ':' + minute + 'PM';\n        }\n\n        else if(hour === 12){\n            currentTime = hour + ':' + minute +'PM';\n        }\n        else if(hour === 0){\n            currentTime = 1 + ':' + minute + 'AM';\n        }\n        else{\n            currentTime = hour + ':' + minute +'AM';\n        }\n\n        return currentTime;\n\n    }\n\n//});\n",
+    "static": true,
+    "longname": "js/appointments.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 1,
+    "kind": "variable",
+    "name": "companyData",
+    "memberof": "js/appointments.js",
+    "static": true,
+    "longname": "js/appointments.js~companyData",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/appointments.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 3,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 2,
+    "kind": "variable",
+    "name": "myCompanyId",
+    "memberof": "js/appointments.js",
+    "static": true,
+    "longname": "js/appointments.js~myCompanyId",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/appointments.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 4,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 3,
+    "kind": "variable",
+    "name": "curUser",
+    "memberof": "js/appointments.js",
+    "static": true,
+    "longname": "js/appointments.js~curUser",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/appointments.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 5,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 4,
+    "kind": "variable",
+    "name": "appts",
+    "memberof": "js/appointments.js",
+    "static": true,
+    "longname": "js/appointments.js~appts",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/appointments.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 9,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 5,
+    "kind": "function",
+    "name": "initializeAppts",
+    "memberof": "js/appointments.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/appointments.js~initializeAppts",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/appointments.js",
+    "importStyle": null,
+    "description": "initializ a list of appts",
+    "lineNumber": 15,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "displays the appt list"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "none",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "displays the appt list"
+    }
+  },
+  {
+    "__docId__": 6,
+    "kind": "variable",
+    "name": "source",
+    "memberof": "js/appointments.js",
+    "static": true,
+    "longname": "js/appointments.js~source",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/appointments.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 27,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 7,
+    "kind": "variable",
+    "name": "template",
+    "memberof": "js/appointments.js",
+    "static": true,
+    "longname": "js/appointments.js~template",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/appointments.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 28,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 8,
+    "kind": "variable",
+    "name": "compiledHtml",
+    "memberof": "js/appointments.js",
+    "static": true,
+    "longname": "js/appointments.js~compiledHtml",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/appointments.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 29,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 9,
+    "kind": "function",
+    "name": "getAppts",
+    "memberof": "js/appointments.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/appointments.js~getAppts",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/appointments.js",
+    "importStyle": null,
+    "description": "Makes a get request to display list of appts",
+    "lineNumber": 39,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "displays the appt list"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "none",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "displays the appt list"
+    }
+  },
+  {
+    "__docId__": 10,
+    "kind": "function",
+    "name": "submitForm",
+    "memberof": "js/appointments.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/appointments.js~submitForm",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/appointments.js",
+    "importStyle": null,
+    "description": "When a patient submits their form",
+    "lineNumber": 60,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "updates the appt list"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "none",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "updates the appt list"
+    }
+  },
+  {
+    "__docId__": 11,
+    "kind": "function",
+    "name": "updateApptList",
+    "memberof": "js/appointments.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/appointments.js~updateApptList",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/appointments.js",
+    "importStyle": null,
+    "description": "Makes a post request to update list of appts when adding a new employee",
+    "lineNumber": 75,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "updates the appt list"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "none",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "updates the appt list"
+    }
+  },
+  {
+    "__docId__": 12,
+    "kind": "function",
+    "name": "grabFormElements",
+    "memberof": "js/appointments.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/appointments.js~grabFormElements",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/appointments.js",
+    "importStyle": null,
+    "description": "Grabs elements from the check in and puts it into an object",
+    "lineNumber": 95,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "new appt object"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "none",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "new appt object"
+    }
+  },
+  {
+    "__docId__": 13,
+    "kind": "function",
+    "name": "formatDate",
+    "memberof": "js/appointments.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/appointments.js~formatDate",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/appointments.js",
+    "importStyle": null,
+    "description": "FUNCTIONS TO FORMAT JAVASCRIPT DATES",
+    "lineNumber": 135,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "a formated dates"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "none",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "a formated dates"
+    }
+  },
+  {
+    "__docId__": 14,
+    "kind": "function",
+    "name": "formatNumber",
+    "memberof": "js/appointments.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/appointments.js~formatNumber",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/appointments.js",
+    "importStyle": null,
+    "description": "FUNCTIONS TO FORMAT A PHONE NUMBER",
+    "lineNumber": 156,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "a formated phone number"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "none",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "a formated phone number"
+    }
+  },
+  {
+    "__docId__": 15,
+    "kind": "function",
+    "name": "jsDate",
+    "memberof": "js/appointments.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/appointments.js~jsDate",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/appointments.js",
+    "importStyle": null,
+    "description": "FUNCTION TO FORMAT DATE OBJECT IN JS",
+    "lineNumber": 167,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "a formated dates in JSON"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "none",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "a formated dates in JSON"
+    }
+  },
+  {
+    "__docId__": 16,
+    "kind": "function",
+    "name": "reFormatDate",
+    "memberof": "js/appointments.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/appointments.js~reFormatDate",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/appointments.js",
+    "importStyle": null,
+    "description": "FUNCTION TO FORMAT DATE TO JS FOR ROBOTS",
+    "lineNumber": 181,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "a formated date"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "none",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "a formated date"
+    }
+  },
+  {
+    "__docId__": 17,
+    "kind": "function",
+    "name": "reFormatTime",
+    "memberof": "js/appointments.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/appointments.js~reFormatTime",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/appointments.js",
+    "importStyle": null,
+    "description": "FUNCTION TO FORMAT TIME TO JS FOR ROBOTS",
+    "lineNumber": 204,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "a formated date"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "none",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "a formated date"
+    }
+  },
+  {
+    "__docId__": 18,
+    "kind": "function",
+    "name": "formatTime",
+    "memberof": "js/appointments.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/appointments.js~formatTime",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/appointments.js",
+    "importStyle": null,
+    "description": "FUNCTION TO FORMAT TIME TO AM AND PM FOR HUMANS",
+    "lineNumber": 243,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "a formated date"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "none",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "a formated date"
+    }
+  },
+  {
+    "__docId__": 19,
+    "kind": "file",
+    "name": "js/checkin.js",
+    "content": "//$(document).ready(function(){\n\n    var socket = io();\n\n    var VALIDATE_COMPANY_ID = \"validate_company_id\";\n    var ADD_VISITOR = \"add_visitor\";\n    \n    var companyData = JSON.parse(localStorage.getItem(\"currentCompany\"));\n    console.log(companyData);\n    socket.emit(VALIDATE_COMPANY_ID, companyData);\n    \n    //Prevent users from scrolling around on iPad\n    /***\n     * Prevent users from scrolling around on iPad\n     * @param None\n     * @returns None\n     */\n    document.ontouchmove = function(e) {\n        e.preventDefault();\n    };\n\n    //Bind Listeners\n    $('#tap-to-check').on('click', startCheckIn);\n    $('.check-in').on('submit', submitForm);\n\n    //When a user starts their check in\n             /***\n     * When a user starts their check in\n     * @param None\n     * @returns None\n     */\n    function startCheckIn(){\n        $('.check-in').addClass('show');\n        $('.check-in').animate({\n            top:'10%',\n            opacity: '1'\n        }, 700);\n        $(this).addClass('hide');\n        $('#clock').addClass('hide');\n    }\n\n    //When a patient submits their form\n\n         /***\n     * When a patient submits their form\n     * @param None\n     * @returns None\n     */\n    function submitForm(){\n        //event.preventDefault();\n        var data = grabFormElements();\n        //console.log(data.company_id);\n        if(localStorage.getItem(\"slackToken\")&&localStorage.getItem(\"slackChannel\"))\n        {\n             $.post(\"https://slack.com/api/chat.postMessage\",\n             {\n                'token': localStorage.getItem(\"slackToken\"),\n                'channel': localStorage.getItem(\"slackChannel\"), \n                'text': \"Name: \" + data['first_name'] + \" \" + data['last_name'] + \" Phone Number: \" + data['phone_number']\n             },\n             function(data, status){\n              });\n        }\n        socket.emit(ADD_VISITOR, data);\n\n        $(this).animate({\n            top:'35%',\n            opacity:'0'\n        },0);\n\n    }\n    //Grabs elements from the check in and puts it into an object\n     /***\n     * Grabs elements from the check in and puts it into an object\n     * @param None\n     * @returns new visitor object\n     */\n    function grabFormElements(){\n        var newVisitor = {};\n        newVisitor.company_id = companyData._id;\n        newVisitor.first_name= $('#visitor-first').val();\n        newVisitor.last_name = $('#visitor-last').val();\n        newVisitor.phone_number = $('#visitor-number').val();\n        newVisitor.checkin_time = new Date();\n        return newVisitor;\n    }\n\n     /***\n     * updates the clock\n     * @param None\n     * @returns None\n     */\n    function updateClock () {\n        var currentTime = new Date ( );\n        var currentHours = currentTime.getHours ( );\n        var currentMinutes = currentTime.getMinutes ( );\n        //var currentSeconds = currentTime.getSeconds ( );\n        // Pad the minutes and seconds with leading zeros, if required\n        currentMinutes = ( currentMinutes < 10 ? \"0\" : \"\" ) + currentMinutes;\n        //currentSeconds = ( currentSeconds < 10 ? \"0\" : \"\" ) + currentSeconds;\n\n        // Convert the hours component to 12-hour format if needed\n        currentHours = ( currentHours > 12 ) ? currentHours - 12 : currentHours;\n\n        // Convert an hours component of \"0\" to \"12\"\n        currentHours = ( currentHours == 0 ) ? 12 : currentHours;\n\n        // Compose the string for display\n        var currentTimeString = currentHours + \":\" + currentMinutes;\n\n        $(\"#clock\").html(currentTimeString);\n    }\n    updateClock();\n    setInterval(updateClock, 60 * 1000);\n\n    /***\n     * Find a specific cookie name\n     * @param cName\n     * @returns {string|*}\n     */\n    function getCookie(cName) {\n        var name = cName + '=';\n        var cookieArray = document.cookie.split(';');\n\n        for (var i = 0, len = cookieArray.length; i < len; i++) {\n            var cookie = cookieArray[i];\n            while (cookie.charAt(0) == ' ')\n                cookie.substring(1);\n            if (cookie.indexOf(name) == 0)\n                return cookie.substring(name.length, cookie.length);\n        }\n\n    }\n\n\n//});\n",
+    "static": true,
+    "longname": "js/checkin.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 20,
+    "kind": "variable",
+    "name": "socket",
+    "memberof": "js/checkin.js",
+    "static": true,
+    "longname": "js/checkin.js~socket",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/checkin.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 3,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 21,
+    "kind": "variable",
+    "name": "VALIDATE_COMPANY_ID",
+    "memberof": "js/checkin.js",
+    "static": true,
+    "longname": "js/checkin.js~VALIDATE_COMPANY_ID",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/checkin.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 5,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "string"
+      ]
+    }
+  },
+  {
+    "__docId__": 22,
+    "kind": "variable",
+    "name": "ADD_VISITOR",
+    "memberof": "js/checkin.js",
+    "static": true,
+    "longname": "js/checkin.js~ADD_VISITOR",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/checkin.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 6,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "string"
+      ]
+    }
+  },
+  {
+    "__docId__": 23,
+    "kind": "variable",
+    "name": "companyData",
+    "memberof": "js/checkin.js",
+    "static": true,
+    "longname": "js/checkin.js~companyData",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/checkin.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 8,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 24,
+    "kind": "function",
+    "name": "ontouchmove",
+    "memberof": "js/checkin.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/checkin.js~ontouchmove",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/checkin.js",
+    "importStyle": null,
+    "description": "Prevent users from scrolling around on iPad",
+    "lineNumber": 18,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "None"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "None",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "None"
+    }
+  },
+  {
+    "__docId__": 25,
+    "kind": "function",
+    "name": "startCheckIn",
+    "memberof": "js/checkin.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/checkin.js~startCheckIn",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/checkin.js",
+    "importStyle": null,
+    "description": "When a user starts their check in",
+    "lineNumber": 32,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "None"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "None",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "None"
+    }
+  },
+  {
+    "__docId__": 26,
+    "kind": "function",
+    "name": "submitForm",
+    "memberof": "js/checkin.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/checkin.js~submitForm",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/checkin.js",
+    "importStyle": null,
+    "description": "When a patient submits their form",
+    "lineNumber": 49,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "None"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "None",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "None"
+    }
+  },
+  {
+    "__docId__": 27,
+    "kind": "function",
+    "name": "grabFormElements",
+    "memberof": "js/checkin.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/checkin.js~grabFormElements",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/checkin.js",
+    "importStyle": null,
+    "description": "Grabs elements from the check in and puts it into an object",
+    "lineNumber": 78,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "new visitor object"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "None",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "new visitor object"
+    }
+  },
+  {
+    "__docId__": 28,
+    "kind": "function",
+    "name": "updateClock",
+    "memberof": "js/checkin.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/checkin.js~updateClock",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/checkin.js",
+    "importStyle": null,
+    "description": "updates the clock",
+    "lineNumber": 93,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "None"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "None",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "None"
+    }
+  },
+  {
+    "__docId__": 29,
+    "kind": "function",
+    "name": "getCookie",
+    "memberof": "js/checkin.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/checkin.js~getCookie",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/checkin.js",
+    "importStyle": null,
+    "description": "Find a specific cookie name",
+    "lineNumber": 121,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{string|*}"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "cName",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "string",
+        "*"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 30,
+    "kind": "file",
+    "name": "js/dashboard.js",
+    "content": "/**\n * A JSON contains the user's state\n */\nvar userState = JSON.parse(localStorage.getItem(\"userState\"));\n  if(!userState){\n    location.href= \"login.html\";\n}\n\n$(document).ready(function(){\n\n\n    var socket = io(); //Initialize Socket\n\n    //Socket variables\n    var DEBUG = 1;\n    var VALIDATE_COMPANY_ID = \"validate_company_id\";\n    var VISITOR_LIST_UPDATE = \"visitor_list_update\";\n    var REMOVE_VISITOR = \"remove_visitor\";\n\n    var companyData = JSON.parse(localStorage.getItem(\"currentCompany\"));\n    var visitorList;\n    companyData.company_id = companyData._id;\n\n\n    //var curCompany = JSON.parse(localStorage.getItem('currentCompany'));\n    var curUser = JSON.parse(localStorage.getItem('currentUser'));\n    var companyName = companyData.name;\n\n\n    $('#user-name').text(curUser.first_name + ' ' +  curUser.last_name);\n\n    //Connect to private socket\n    //var companyId = getCookie('company_id');\n    socket.emit(VALIDATE_COMPANY_ID, companyData);\n\n   /***\n    * Compile all the Handle Bar Templates\n    */\n    //DashBoard Template\n    var source = $(\"#visitor-list-template\").html();\n    var template = Handlebars.compile(source);\n\n    //Modal Template\n    var modal = $('#visitor-info-template').html();\n    var modalTemplate = Handlebars.compile(modal);\n\n    //SOCKET LISTEN FOR VISITOR QUEUE\n    socket.on(VISITOR_LIST_UPDATE, function (data) {\n        visitorList = data.visitors\n        //Parse Visitor List to format Date\n        for(var i = 0, len = visitorList.length; i< len; i++){\n            visitorList[i].checkin_time = formatTime(visitorList[i].checkin_time);\n        }\n\n        //Parse Visitors appoitments\n        for(i = 0; i < len; i++){\n          var appList = visitorList[i].appointments;\n          if(appList[0]){\n            for(var j = 0, appLen = appList.length; j < appLen; j++){\n              if(compareDate(appList[j].date)){\n                visitorList[i].appointmentTime = formatTime(appList[j].date);\n                visitorList[i]._apptId = appList[j]._id;\n                break;\n              }\n            }\n          }\n          else{\n      \n            visitorList[i].appointmentTime = \"None\";\n          }\n        }\n\n       //visitorList.checkin_time = visitorList;\n        var compiledHtml = template(visitorList);\n        $('#visitor-list').html(compiledHtml);\n    });\n\n\n    /***\n    * Listener for Opening a Modal\n    */\n    $(document).on('click','.patient-check-out',function(){\n        var uniqueId = $(this).attr('value');\n        var visitor = findVisitor(uniqueId);\n        var compiledTemplate = modalTemplate(visitor);\n        $('.modal-dialog').html(compiledTemplate);\n    });\n\n    /***\n     * Listener for Checking out a Visitor\n     */\n    $(document).on('click','.check-in-btn',function(){\n        var id = $(this).closest('.modal-content').find('.modal-body').attr('value');\n        var apptId = $(this).closest('.modal-content').find('.modal-left').attr('value');\n\n        var removeVisitor = findVisitor(id);\n   \n        removeVisitor.visitor_id = removeVisitor._id;\n\n        $.ajax({\n          dataType:'json',\n          type: 'DELETE',\n          url:'/api/appointments/' + apptId,\n          success:function(response){\n          }\n        });\n        \n\n        socket.emit(REMOVE_VISITOR, removeVisitor);\n    });\n/*\n    $(document).on('click','.checkout-btn',function(){\n        var id = $(this).closest('.patient-check-out').attr('value');\n        var removeVisitor = findVisitor(id);\n        console.log(removeVisitor);\n        //removeVisitor.visitor_id = removeVisitor._id;\n        //socket.emit(REMOVE_VISITOR, removeVisitor);\n\n    });\n*/\n    /***\n     * Compare appointment Date to today's Date\n     */\n    function compareDate(appointment){\n      var today = new Date();\n      appointment = new Date(Date.parse(appointment));\n\n      var appointmentDate = appointment.getFullYear() + ' ' + appointment.getDate() + ' ' + appointment.getMonth();\n      var todayDate = today.getFullYear() + ' ' + today.getDate() + ' ' + today.getMonth();\n\n      return (appointmentDate == todayDate);\n    }\n\n    /***\n     * Find Specific Visitor Given Visitor ID within the Visitor Array\n     * @param id\n     * @returns {string}\n     */\n    function findVisitor(id){\n\n        for(var visitor in visitorList) {\n           if(visitorList.hasOwnProperty(visitor)){\n              if(visitorList[visitor]._id === id){\n                  if(DEBUG) console.log(visitorList[visitor]);\n                  return visitorList[visitor];\n              }\n           }\n        }\n    }\n\n    /***\n     * Function to format a JSON date object into a string\n     * @param time\n     */\n    function formatTime(time){\n        var currentTime = new Date(Date.parse(time));\n        var hour = currentTime.getHours();\n        var minute = currentTime.getMinutes();\n\n        if(minute < 10) {\n            minute = '0' + minute;\n        }\n\n        if(hour >= 13){\n            hour = hour-12;\n            currentTime = hour + ':' + minute + 'PM';\n        }\n\n        else if(hour === 12){\n            currentTime = hour + ':' + minute +'PM';\n        }\n        else if(hour === 0){\n            currentTime = 1 + ':' + minute + 'AM';\n        }\n        else{\n            currentTime = hour + ':' + minute +'AM';\n        }\n\n        return currentTime;\n\n    }\n\n    $('#logoutButton').on('click',function(){\n      localStorage.setItem('userState',0);\n    });\n\n\n    /***\n     * TODO order the list by increasing order\n     * @param key\n     */\n    function increasingOrder(key){\n\n    }\n\n    /***\n     * TODO order the list by decreasing order\n     * @param key\n     */\n    function decreasingOrder(key){\n\n    }\n\n});\n",
+    "static": true,
+    "longname": "js/dashboard.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 31,
+    "kind": "variable",
+    "name": "userState",
+    "memberof": "js/dashboard.js",
+    "static": true,
+    "longname": "js/dashboard.js~userState",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/dashboard.js",
+    "importStyle": null,
+    "description": "A JSON contains the user's state",
+    "lineNumber": 4,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 32,
+    "kind": "file",
+    "name": "js/employees.js",
+    "content": "//$(document).ready(function(){\n    var companyData = JSON.parse(localStorage.getItem(\"currentCompany\"));\n    var myCompanyId = companyData._id;\n\n    console.log(myCompanyId);\n\n    var curUser = JSON.parse(localStorage.getItem('currentUser'));\n    $('#user-name').text(curUser.first_name + ' ' +  curUser.last_name);\n\n    var employees = getEmployees();\n    \n    var source = $(\"#employee-list-template\").html();\n    var template = Handlebars.compile(source);\n    var compiledHtml = template(employees);\n\n    $(\"#employee-list\").html(compiledHtml);\n    $('.save-btn').click(submitForm);\n\n    \n   /***\n     * Makes a get request to display list of employees \n     * @param none\n     * @returns displays the employee list\n     */\n    function getEmployees() {\n       var json;\n       $.ajax({\n           dataType: 'json',\n           type: 'GET',\n           data: $('#response').serialize(),\n           async: false,\n           url: '/api/employees/company/' + myCompanyId,\n           success: function(response) {\n               json = response;\n               //console.log(response);\n           }\n       });\n       return json;\n   }\n\n   /***\n     * Makes a post request to update list of employees when adding a new employee\n     * @param none\n     * @returns updates the employee list\n     */\n   function updateEmployeeList(obj) {\n      $.ajax({\n        dataType: 'json',\n           type: 'POST',\n           data: obj,\n           async: false,\n           url: '/api/employees',\n           success: function(response) {\n               employees.push(response);\n               //console.log(response);\n           }\n      });\n    }\n\n     /***\n     * When a patient submits their form\n     * @param none\n     * @returns updates the employee list\n     */\n    function submitForm(){\n        var d = grabFormElements();\n        console.log(d);\n        updateEmployeeList(d);\n        $(\"#employee-list\").html(template(employees));\n        document.getElementById(\"employee-form\").reset();\n    }\n\n    /***\n     * Grabs elements from the check in and puts it into an object\n     * @param none\n     * @returns new employee object\n     */\n    function grabFormElements(){\n        var newEmployee = {};\n        newEmployee.company_id = myCompanyId;\n        newEmployee.role = \"c_employee\",\n        newEmployee.first_name= $('#employee-first').val();\n        newEmployee.last_name = $('#employee-last').val();\n        newEmployee.phone_number = $('#employee-number').val();\n        newEmployee.email = $('#employee-email').val();\n        newEmployee.password = $('#employee-pw').val();\n        newEmployee.confirm_password = $('#employee-confirm-pw').val();\n        return newEmployee;\n    }\n\n     /***\n     * Find Specific Employee Given Employee ID within the Employee Array\n     * @param id\n     * @returns {string}\n     */\n    function findEmployee(id){\n\n        for(var employee in employeeList) {\n           if(employeeList.hasOwnProperty(employee)){\n              if(employeeList[employee]._id === id){\n                  if(DEBUG) //console.log(employeeList[employee]);\n                  return employeeList[employee];\n              }\n           }\n        }\n    }\n\n    $('#logoutButton').on('click',function(){\n      localStorage.setItem('userState',0);\n    });\n\n\n//});\n",
+    "static": true,
+    "longname": "js/employees.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 33,
+    "kind": "variable",
+    "name": "companyData",
+    "memberof": "js/employees.js",
+    "static": true,
+    "longname": "js/employees.js~companyData",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/employees.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 2,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 34,
+    "kind": "variable",
+    "name": "myCompanyId",
+    "memberof": "js/employees.js",
+    "static": true,
+    "longname": "js/employees.js~myCompanyId",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/employees.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 3,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 35,
+    "kind": "variable",
+    "name": "curUser",
+    "memberof": "js/employees.js",
+    "static": true,
+    "longname": "js/employees.js~curUser",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/employees.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 7,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 36,
+    "kind": "variable",
+    "name": "employees",
+    "memberof": "js/employees.js",
+    "static": true,
+    "longname": "js/employees.js~employees",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/employees.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 10,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 37,
+    "kind": "variable",
+    "name": "source",
+    "memberof": "js/employees.js",
+    "static": true,
+    "longname": "js/employees.js~source",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/employees.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 12,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 38,
+    "kind": "variable",
+    "name": "template",
+    "memberof": "js/employees.js",
+    "static": true,
+    "longname": "js/employees.js~template",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/employees.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 13,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 39,
+    "kind": "variable",
+    "name": "compiledHtml",
+    "memberof": "js/employees.js",
+    "static": true,
+    "longname": "js/employees.js~compiledHtml",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/employees.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 14,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 40,
+    "kind": "function",
+    "name": "getEmployees",
+    "memberof": "js/employees.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/employees.js~getEmployees",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/employees.js",
+    "importStyle": null,
+    "description": "Makes a get request to display list of employees ",
+    "lineNumber": 25,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "displays the employee list"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "none",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "displays the employee list"
+    }
+  },
+  {
+    "__docId__": 41,
+    "kind": "function",
+    "name": "updateEmployeeList",
+    "memberof": "js/employees.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/employees.js~updateEmployeeList",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/employees.js",
+    "importStyle": null,
+    "description": "Makes a post request to update list of employees when adding a new employee",
+    "lineNumber": 46,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "updates the employee list"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "none",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "updates the employee list"
+    }
+  },
+  {
+    "__docId__": 42,
+    "kind": "function",
+    "name": "submitForm",
+    "memberof": "js/employees.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/employees.js~submitForm",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/employees.js",
+    "importStyle": null,
+    "description": "When a patient submits their form",
+    "lineNumber": 65,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "updates the employee list"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "none",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "updates the employee list"
+    }
+  },
+  {
+    "__docId__": 43,
+    "kind": "function",
+    "name": "grabFormElements",
+    "memberof": "js/employees.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/employees.js~grabFormElements",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/employees.js",
+    "importStyle": null,
+    "description": "Grabs elements from the check in and puts it into an object",
+    "lineNumber": 78,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "new employee object"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "none",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "new employee object"
+    }
+  },
+  {
+    "__docId__": 44,
+    "kind": "function",
+    "name": "findEmployee",
+    "memberof": "js/employees.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/employees.js~findEmployee",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/employees.js",
+    "importStyle": null,
+    "description": "Find Specific Employee Given Employee ID within the Employee Array",
+    "lineNumber": 96,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{string}"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "id",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 45,
+    "kind": "file",
+    "name": "js/login.js",
+    "content": "// with Button named loginButton\n$(function() {\n   $('#loginButton').click(function () {\n       var userData = grabUserData();\n       //alert(userData);\n       event.preventDefault();\n       ajaxPostUser('/api/employees/login', userData);\n       \n   });\n});\n\n\n// with Button named signin-bt\n$(function() {\n   $('#logoutButton').click(function() {\n       localStorage.removeItem('userState');\n       localStorage.removeItem('currentUser');\n       localStorage.removeItem('currentCompany');\n   });\n});\n\n//Ajax function to create a POST request to server\n   /***\n     * Ajax function to create a POST request to server\n     * @param url, data\n     * @returns none\n     */\nfunction ajaxPostUser(url, data){\n   $.ajax({\n       type: \"POST\",\n       url: url,\n       data: data,\n       dataType: 'json',\n       success: function(response){\n           console.log(response);\n           if(response.role == 'a_admin'){\n             localStorage.setItem('userState' , 2);\n             location.href = '/admin-dashboard.html'\n           }\n           else{\n             localStorage.setItem('userState' , 1);\n             localStorage.setItem('currentUser', JSON.stringify(response));\n             ajaxGetCompanyInfo('/api/companies/' + response.company_id);\n             location.href = '/visitors.html';\n         }\n       },\n       error: function() {\n\n           window.onerror=handleError();\n           event.preventDefault();\n           //location.href = '/login.html';\n        }\n   });\n}\n// ex) company_id : 56e8a51293a19986040e93fe\n//Ajax function to create a POST request to server\n   /***\n     * Ajax function to create a POST request to server\n     * @param a url\n     * @returns a JSON contains the company's information\n     */\nfunction ajaxGetCompanyInfo(url){\n   $.ajax({\n       type: \"GET\",\n       url: url,\n       data: $('#response').serialize(),\n       async: false,\n       dataType: 'json',\n       success: function(response){\n           console.log(response);\n           //alert(response.name);\n           localStorage.setItem('currentCompany', JSON.stringify(response));\n       }\n   });\n}\n\n   /***\n     * Retrieve user data\n     * @param none\n     * @returns a JSON contains user's email and password\n     */\nfunction grabUserData(){\n   var user = {};\n   user.email = $('#username').val();\n   user.password = $('#password').val();\n   return user;\n}\n\n\n   /***\n     * Uses to handle errors\n     * @param none\n     * @returns boolean of if error handled\n     */\nfunction handleError()\n{\n   errorlog.innerHTML=\"Not Valid Username and Password, please type valid one.\";\n   return true;\n}",
+    "static": true,
+    "longname": "js/login.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 46,
+    "kind": "function",
+    "name": "ajaxPostUser",
+    "memberof": "js/login.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/login.js~ajaxPostUser",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/login.js",
+    "importStyle": null,
+    "description": "Ajax function to create a POST request to server",
+    "lineNumber": 28,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "none"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "url,",
+        "description": "data"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "none"
+    }
+  },
+  {
+    "__docId__": 47,
+    "kind": "function",
+    "name": "ajaxGetCompanyInfo",
+    "memberof": "js/login.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/login.js~ajaxGetCompanyInfo",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/login.js",
+    "importStyle": null,
+    "description": "Ajax function to create a POST request to server",
+    "lineNumber": 62,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "a JSON contains the company's information"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "a",
+        "description": "url"
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "a JSON contains the company's information"
+    }
+  },
+  {
+    "__docId__": 48,
+    "kind": "function",
+    "name": "grabUserData",
+    "memberof": "js/login.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/login.js~grabUserData",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/login.js",
+    "importStyle": null,
+    "description": "Retrieve user data",
+    "lineNumber": 82,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "a JSON contains user's email and password"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "none",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "a JSON contains user's email and password"
+    }
+  },
+  {
+    "__docId__": 49,
+    "kind": "function",
+    "name": "handleError",
+    "memberof": "js/login.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/login.js~handleError",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/login.js",
+    "importStyle": null,
+    "description": "Uses to handle errors",
+    "lineNumber": 95,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "boolean of if error handled"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "none",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "boolean of if error handled"
+    }
+  },
+  {
+    "__docId__": 50,
+    "kind": "file",
+    "name": "js/settings.js",
+    "content": "//$(document).ready(function(){\n   var companyData = JSON.parse(localStorage.getItem(\"currentCompany\"));\n   var myCompanyId = companyData._id;\n\n   console.log(myCompanyId);\n\n\n   var curUser = JSON.parse(localStorage.getItem('currentUser'));\n   $('#user-name').text(curUser.first_name + ' ' +  curUser.last_name);\n   var employees = getEmployee();\n\n   var source = $(\"#setting-list-template\").html();\n   var template = Handlebars.compile(source);\n   var compiledHtml = template(employees);\n\n\n\n   // Pre-fill in current user information\n   document.getElementsByTagName(\"input\")[0].setAttribute(\"value\", curUser.first_name);\n   document.getElementsByTagName(\"input\")[1].setAttribute(\"value\", curUser.last_name);\n   document.getElementsByTagName(\"input\")[2].setAttribute(\"value\", curUser.phone_number);\n   document.getElementsByTagName(\"input\")[3].setAttribute(\"value\", curUser.email);\n\n   // Pulls up form to change employee info\n   $('.update-btn').click(updateEmployeeInfo);\n   $(\"#setting-list\").html(compiledHtml);\n\n   /***\n    * Makes a get request to display list of employees\n    * @param none\n    * @returns displays the employee list\n    */\n   function getEmployee() {\n       var json;\n       $.ajax({\n           dataType: 'json',\n           type: 'GET',\n           data: $('#response').serialize(),\n           async: false,\n           url: '/api/employees/' + curUser._id,\n           success: function(response) {\n               json = response;\n               console.log(response);\n           }\n       });\n       return json;\n   }\n\n   /***\n    * Grabs elements from the check in and puts it into an object\n    * @param none\n    * @returns new employee object\n    */\n   function grabFormElementsUpdate(){\n       var newEmployee = {};\n       newEmployee.first_name= $('#employee-first').val();\n       newEmployee.last_name = $('#employee-last').val();\n       newEmployee.phone_number = $('#employee-number').val();\n       newEmployee.email = $('#employee-email').val();\n       return newEmployee;\n   }\n\n   /***\n    * Update the current employee information\n    * @param id\n    * @returns {string}\n    */\n   function updateEmployeeInfo(){\n       var data = grabFormElementsUpdate();\n       console.log(data);\n       updateEmployee(data);\n       $(\"#setting-list\").html(template(employees));\n       document.getElementById(\"settings-form\").reset();\n   }\n\n   /***\n    * Makes a put request to update info of employee\n    * @param obj\n    * @returns updates the employee's information\n    */\n   function updateEmployee(obj) {\n       $.ajax({\n           dataType: 'json',\n           type: 'PUT',\n           data: obj,\n           async: false,\n           url: '/api/employees/' + curUser._id,\n           success: function(response) {\n               console.log(response);\n               localStorage.setItem('currentUser', JSON.stringify(response));\n           }\n       });\n   }\n\n   $('#logoutButton').on('click',function(){\n       localStorage.setItem('userState',0);\n   });\n\n\n//});",
+    "static": true,
+    "longname": "js/settings.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 51,
+    "kind": "variable",
+    "name": "companyData",
+    "memberof": "js/settings.js",
+    "static": true,
+    "longname": "js/settings.js~companyData",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/settings.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 2,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 52,
+    "kind": "variable",
+    "name": "myCompanyId",
+    "memberof": "js/settings.js",
+    "static": true,
+    "longname": "js/settings.js~myCompanyId",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/settings.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 3,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 53,
+    "kind": "variable",
+    "name": "curUser",
+    "memberof": "js/settings.js",
+    "static": true,
+    "longname": "js/settings.js~curUser",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/settings.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 8,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 54,
+    "kind": "variable",
+    "name": "employees",
+    "memberof": "js/settings.js",
+    "static": true,
+    "longname": "js/settings.js~employees",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/settings.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 10,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 55,
+    "kind": "variable",
+    "name": "source",
+    "memberof": "js/settings.js",
+    "static": true,
+    "longname": "js/settings.js~source",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/settings.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 12,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 56,
+    "kind": "variable",
+    "name": "template",
+    "memberof": "js/settings.js",
+    "static": true,
+    "longname": "js/settings.js~template",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/settings.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 13,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 57,
+    "kind": "variable",
+    "name": "compiledHtml",
+    "memberof": "js/settings.js",
+    "static": true,
+    "longname": "js/settings.js~compiledHtml",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/settings.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 14,
+    "undocument": true,
+    "unknown": [
+      {
+        "tagName": "@_undocument",
+        "tagValue": ""
+      }
+    ],
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 58,
+    "kind": "function",
+    "name": "getEmployee",
+    "memberof": "js/settings.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/settings.js~getEmployee",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/settings.js",
+    "importStyle": null,
+    "description": "Makes a get request to display list of employees",
+    "lineNumber": 33,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "displays the employee list"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "none",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "displays the employee list"
+    }
+  },
+  {
+    "__docId__": 59,
+    "kind": "function",
+    "name": "grabFormElementsUpdate",
+    "memberof": "js/settings.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/settings.js~grabFormElementsUpdate",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/settings.js",
+    "importStyle": null,
+    "description": "Grabs elements from the check in and puts it into an object",
+    "lineNumber": 54,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "new employee object"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "none",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "new employee object"
+    }
+  },
+  {
+    "__docId__": 60,
+    "kind": "function",
+    "name": "updateEmployeeInfo",
+    "memberof": "js/settings.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/settings.js~updateEmployeeInfo",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/settings.js",
+    "importStyle": null,
+    "description": "Update the current employee information",
+    "lineNumber": 68,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "{string}"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "id",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "string"
+      ],
+      "spread": false,
+      "description": ""
+    }
+  },
+  {
+    "__docId__": 61,
+    "kind": "function",
+    "name": "updateEmployee",
+    "memberof": "js/settings.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/settings.js~updateEmployee",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/settings.js",
+    "importStyle": null,
+    "description": "Makes a put request to update info of employee",
+    "lineNumber": 81,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "updates the employee's information"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "obj",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "updates the employee's information"
+    }
+  },
+  {
+    "__docId__": 62,
+    "kind": "file",
+    "name": "js/shared.js",
+    "content": "/*var companyData = JSON.parse(localStorage.getItem(\"currentCompany\"));\nvar visitorList;\ncompanyData.company_id = companyData._id;\nvar curUser = JSON.parse(localStorage.getItem('currentUser'));\n\nvar companyName = companyData.name;\nconsole.log(companyData);\n$('#user-name').text(curUser.first_name + ' ' +  curUser.last_name);*/\n\n/**\n * A JSON contains the user's state\n */\nvar userState = JSON.parse(localStorage.getItem(\"userState\"));\n  if(!userState || userState == 2){\n    location.href= \"login.html\";\n}\n",
+    "static": true,
+    "longname": "js/shared.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 63,
+    "kind": "variable",
+    "name": "userState",
+    "memberof": "js/shared.js",
+    "static": true,
+    "longname": "js/shared.js~userState",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/shared.js",
+    "importStyle": null,
+    "description": "A JSON contains the user's state",
+    "lineNumber": 13,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 64,
+    "kind": "file",
+    "name": "js/signup.js",
+    "content": "/**\n * Created by DanielKong on 3/8/16.\n */\n//$(document).ready(function(){\n\n    var companyId;\n\n    //Listener for Initial Sign up of an Employee\n    $('#submit-btn').on('click', function(){\n        var employeeData = grabEmployeeData();\n        console.log(employeeData);\n        ajaxPost('/api/employees',employeeData);\n\n    });\n\n    //Listener for creating a company\n    $('#submit-company-btn').on('click',function(){\n        var companyData = grabCompanyData();\n        console.log(companyData);\n        ajaxPost('/api/companies',companyData);\n    })\n\n    //Grab Company Data from form\n                /***\n     * Grab Company Data from form\n     * @param None\n     * @returns company object\n     */\n    function grabCompanyData(){\n        var company = {};\n        company.name = $('#form-company-name').val();\n        company.email = $('#form-email').val();\n        company.phone_number = $('#form-phone').val();\n        return company;\n\n    }\n\n    //Grab employee data from form\n            /***\n     * Grab employee data from form\n     * @param None\n     * @returns employee object\n     */\n    function grabEmployeeData(){\n        var employee = {};\n        employee.first_name = $('#form-employee-first').val();\n        employee.last_name = $('#form-employee-last').val();\n        employee.email = $('#form-employee-email').val();\n        employee.password = $('#form-password').val();\n        employee.phone_number = $('#form-employee-phone').val();\n        employee.role = 'c_admin';\n        employee.company_id = companyId;\n        return employee;\n    }\n\n    //Ajax function to create a POST request to server\n        /***\n     * Ajax function to create a POST request to server\n     * @param None\n     * @returns None\n     */\n    function ajaxPost(url, data){\n        $.ajax({\n            type: \"POST\",\n            url: url,\n            data: data,\n            dataType: 'json',\n            success: function(response){\n                //console.log(response);\n                if(url == '/api/employees') {\n                    localStorage.setItem('userState', 1);\n                    localStorage.setItem('currentUser', JSON.stringify(response));\n                    location.href = '/visitors.html';\n                }\n                else if (url == '/api/companies') {\n                    localStorage.setItem('currentCompany', JSON.stringify(response));\n                    companyId = response._id;\n                }\n            },\n            error: function(response){\n                console.log(response);\n                var resJSON = JSON.stringify(response);\n                alert(jQuery.parseJSON(resJSON).responseText);\n                event.preventDefault();\n                location.href = '/signup.html';\n            }\n        });\n    }\n    /***\n     * validate the company information\n     * @param None\n     * @returns boolean\n     */\n    function validateCompany(){\n        var companyName = $('#form-company-name').val();\n        var companyEmail = $('#form-email').val();\n        var companyNumber = $('#form-phone').val();\n\n        if(companyName == \"\"){\n            console.log(\"username cannot be blank\");\n        }\n\n        if(validateEmail(companyEmail)){\n            console.log(\"please enter a valid email\");\n        }\n\n\n    \n\n    }\n\n\n    /***\n     * validate if it is a valid Email address\n     * @param None\n     * @returns boolean\n     */\n    function validateEmail(email) {\n        var re = /^(([^<>()\\[\\]\\\\.,;:\\s@\"]+(\\.[^<>()\\[\\]\\\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$/;\n        return re.test(email);\n    }\n    /***\n     * validate if it is a valid password\n     * @param None\n     * @returns boolean\n     */\n    function checkPassword(form){\n\n        if(form.first.value == \"\") {\n          alert(\"Error: Username cannot be blank!\");\n          form.username.focus();\n          return false;\n        }\n        var password = $('#form-password');\n        var confirmPassword = $('#form-repeat-password');\n\n        if(password.value != \"\" && password.value == confirmPassword.value) {\n          if(form.password.value.length < 6) {\n            console.log(\"Password must contain at least six characters!\");\n            password.focus();\n            return false;\n          }\n         if(password.value == password.value) {\n            console.log(\"Error: Password must be different from Username!\");\n            password.focus();\n            return false;\n          }\n          re = /[0-9]/;\n          if(!re.test(password.value)) {\n            console.log(\"Error: password must contain at least one number (0-9)!\");\n            password.focus();\n            return false;\n          }\n          re = /[a-z]/;\n          if(!re.test(password.value)) {\n            console.log(\"Error: password must contain at least one lowercase letter (a-z)!\");\n            password.focus();\n            return false;\n          }\n          re = /[A-Z]/;\n          if(!re.test(form.pwd1.value)) {\n            console.log(\"Error: password must contain at least one uppercase letter (A-Z)!\");\n            password.focus();\n            return false;\n          }\n        } else {\n          console.log(\"Error: Please check that you've entered and confirmed your password!\");\n          password.focus();\n          return false;\n        }\n        console.log(\"You entered a valid password: \" + password.value);\n        return true;\n    }\n\n    /***\n     * validate the form\n     * @param None\n     * @returns boolean\n     */\n    function validateForm(){\n\n    }\n\n\n//});",
+    "static": true,
+    "longname": "js/signup.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1
+  },
+  {
+    "__docId__": 65,
+    "kind": "function",
+    "name": "grabCompanyData",
+    "memberof": "js/signup.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/signup.js~grabCompanyData",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/signup.js",
+    "importStyle": null,
+    "description": "Grab Company Data from form",
+    "lineNumber": 29,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "company object"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "None",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "company object"
+    }
+  },
+  {
+    "__docId__": 66,
+    "kind": "function",
+    "name": "grabEmployeeData",
+    "memberof": "js/signup.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/signup.js~grabEmployeeData",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/signup.js",
+    "importStyle": null,
+    "description": "Grab employee data from form",
+    "lineNumber": 44,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "employee object"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "None",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "employee object"
+    }
+  },
+  {
+    "__docId__": 67,
+    "kind": "function",
+    "name": "ajaxPost",
+    "memberof": "js/signup.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/signup.js~ajaxPost",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/signup.js",
+    "importStyle": null,
+    "description": "Ajax function to create a POST request to server",
+    "lineNumber": 62,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "None"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "None",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "None"
+    }
+  },
+  {
+    "__docId__": 68,
+    "kind": "function",
+    "name": "validateCompany",
+    "memberof": "js/signup.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/signup.js~validateCompany",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/signup.js",
+    "importStyle": null,
+    "description": "validate the company information",
+    "lineNumber": 94,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "boolean"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "None",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "boolean"
+    }
+  },
+  {
+    "__docId__": 69,
+    "kind": "function",
+    "name": "validateEmail",
+    "memberof": "js/signup.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/signup.js~validateEmail",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/signup.js",
+    "importStyle": null,
+    "description": "validate if it is a valid Email address",
+    "lineNumber": 118,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "boolean"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "None",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "boolean"
+    }
+  },
+  {
+    "__docId__": 70,
+    "kind": "function",
+    "name": "checkPassword",
+    "memberof": "js/signup.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/signup.js~checkPassword",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/signup.js",
+    "importStyle": null,
+    "description": "validate if it is a valid password",
+    "lineNumber": 127,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "boolean"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "None",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "boolean"
+    }
+  },
+  {
+    "__docId__": 71,
+    "kind": "function",
+    "name": "validateForm",
+    "memberof": "js/signup.js",
+    "generator": false,
+    "async": false,
+    "static": true,
+    "longname": "js/signup.js~validateForm",
+    "access": null,
+    "export": false,
+    "importPath": "Emissary/js/signup.js",
+    "importStyle": null,
+    "description": "validate the form",
+    "lineNumber": 180,
+    "unknown": [
+      {
+        "tagName": "@returns",
+        "tagValue": "boolean"
+      }
+    ],
+    "params": [
+      {
+        "nullable": null,
+        "types": [
+          "*"
+        ],
+        "spread": false,
+        "optional": false,
+        "name": "None",
+        "description": ""
+      }
+    ],
+    "return": {
+      "nullable": null,
+      "types": [
+        "*"
+      ],
+      "spread": false,
+      "description": "boolean"
+    }
+  },
+  {
+    "__docId__": 73,
+    "kind": "external",
+    "name": "Infinity",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Infinity",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Infinity",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 74,
+    "kind": "external",
+    "name": "NaN",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NaN",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~NaN",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 75,
+    "kind": "external",
+    "name": "undefined",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~undefined",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 76,
+    "kind": "external",
+    "name": "null",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~null",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 77,
+    "kind": "external",
+    "name": "Object",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Object",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 78,
+    "kind": "external",
+    "name": "object",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~object",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 79,
+    "kind": "external",
+    "name": "Function",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Function",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 80,
+    "kind": "external",
+    "name": "function",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~function",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 81,
+    "kind": "external",
+    "name": "Boolean",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Boolean",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 82,
+    "kind": "external",
+    "name": "boolean",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~boolean",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 83,
+    "kind": "external",
+    "name": "Symbol",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Symbol",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 84,
+    "kind": "external",
+    "name": "Error",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Error",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 85,
+    "kind": "external",
+    "name": "EvalError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/EvalError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~EvalError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 86,
+    "kind": "external",
+    "name": "InternalError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/InternalError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~InternalError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 87,
+    "kind": "external",
+    "name": "RangeError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RangeError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~RangeError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 88,
+    "kind": "external",
+    "name": "ReferenceError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ReferenceError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~ReferenceError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 89,
+    "kind": "external",
+    "name": "SyntaxError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SyntaxError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~SyntaxError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 90,
+    "kind": "external",
+    "name": "TypeError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~TypeError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 91,
+    "kind": "external",
+    "name": "URIError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/URIError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~URIError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 92,
+    "kind": "external",
+    "name": "Number",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Number",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 93,
+    "kind": "external",
+    "name": "number",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~number",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 94,
+    "kind": "external",
+    "name": "Date",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Date",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 95,
+    "kind": "external",
+    "name": "String",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~String",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 96,
+    "kind": "external",
+    "name": "string",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~string",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 97,
+    "kind": "external",
+    "name": "RegExp",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~RegExp",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 98,
+    "kind": "external",
+    "name": "Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 99,
+    "kind": "external",
+    "name": "Int8Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int8Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int8Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 100,
+    "kind": "external",
+    "name": "Uint8Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint8Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 101,
+    "kind": "external",
+    "name": "Uint8ClampedArray",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint8ClampedArray",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 102,
+    "kind": "external",
+    "name": "Int16Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int16Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int16Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 103,
+    "kind": "external",
+    "name": "Uint16Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint16Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint16Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 104,
+    "kind": "external",
+    "name": "Int32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int32Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 105,
+    "kind": "external",
+    "name": "Uint32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint32Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 106,
+    "kind": "external",
+    "name": "Float32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Float32Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 107,
+    "kind": "external",
+    "name": "Float64Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float64Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Float64Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 108,
+    "kind": "external",
+    "name": "Map",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Map",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 109,
+    "kind": "external",
+    "name": "Set",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Set",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 110,
+    "kind": "external",
+    "name": "WeakMap",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~WeakMap",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 111,
+    "kind": "external",
+    "name": "WeakSet",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~WeakSet",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 112,
+    "kind": "external",
+    "name": "ArrayBuffer",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~ArrayBuffer",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 113,
+    "kind": "external",
+    "name": "DataView",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~DataView",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 114,
+    "kind": "external",
+    "name": "JSON",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~JSON",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 115,
+    "kind": "external",
+    "name": "Promise",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Promise",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 116,
+    "kind": "external",
+    "name": "Generator",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Generator",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 117,
+    "kind": "external",
+    "name": "GeneratorFunction",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~GeneratorFunction",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 118,
+    "kind": "external",
+    "name": "Reflect",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Reflect",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 119,
+    "kind": "external",
+    "name": "Proxy",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Proxy",
+    "access": null,
+    "description": "",
+    "lineNumber": 193,
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 121,
+    "kind": "external",
+    "name": "CanvasRenderingContext2D",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~CanvasRenderingContext2D",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 122,
+    "kind": "external",
+    "name": "DocumentFragment",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~DocumentFragment",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 123,
+    "kind": "external",
+    "name": "Element",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Element",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~Element",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 124,
+    "kind": "external",
+    "name": "Event",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Event",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~Event",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 125,
+    "kind": "external",
+    "name": "Node",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Node",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~Node",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 126,
+    "kind": "external",
+    "name": "NodeList",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/NodeList",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~NodeList",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 127,
+    "kind": "external",
+    "name": "XMLHttpRequest",
+    "externalLink": "https://developer.mozilla.org/en/docs/Web/API/XMLHttpRequest",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~XMLHttpRequest",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 128,
+    "kind": "external",
+    "name": "AudioContext",
+    "externalLink": "https://developer.mozilla.org/en/docs/Web/API/AudioContext",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "static": true,
+    "longname": "BuiltinExternal/WebAPIExternal.js~AudioContext",
+    "access": null,
+    "description": "",
+    "lineNumber": 34,
+    "builtinExternal": true
+  }
+]
