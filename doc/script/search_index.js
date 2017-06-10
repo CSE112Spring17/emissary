@@ -1,14 +1,200 @@
 window.esdocSearchIndex = [
   [
+    "emissary/js/checkin.js~add_visitor",
+    "variable/index.html#static-variable-ADD_VISITOR",
+    "<span>ADD_VISITOR</span> <span class=\"search-result-import-path\">Emissary/js/checkin.js</span>",
+    "variable"
+  ],
+  [
+    "emissary/js/checkin.js~validate_company_id",
+    "variable/index.html#static-variable-VALIDATE_COMPANY_ID",
+    "<span>VALIDATE_COMPANY_ID</span> <span class=\"search-result-import-path\">Emissary/js/checkin.js</span>",
+    "variable"
+  ],
+  [
     "emissary/js/login.js~ajaxgetcompanyinfo",
     "function/index.html#static-function-ajaxGetCompanyInfo",
     "<span>ajaxGetCompanyInfo</span> <span class=\"search-result-import-path\">Emissary/js/login.js</span>",
     "function"
   ],
   [
+    "emissary/js/signup.js~ajaxpost",
+    "function/index.html#static-function-ajaxPost",
+    "<span>ajaxPost</span> <span class=\"search-result-import-path\">Emissary/js/signup.js</span>",
+    "function"
+  ],
+  [
     "emissary/js/login.js~ajaxpostuser",
     "function/index.html#static-function-ajaxPostUser",
     "<span>ajaxPostUser</span> <span class=\"search-result-import-path\">Emissary/js/login.js</span>",
+    "function"
+  ],
+  [
+    "emissary/js/appointments.js~appts",
+    "variable/index.html#static-variable-appts",
+    "<span>appts</span> <span class=\"search-result-import-path\">Emissary/js/appointments.js</span>",
+    "variable"
+  ],
+  [
+    "emissary/js/signup.js~checkpassword",
+    "function/index.html#static-function-checkPassword",
+    "<span>checkPassword</span> <span class=\"search-result-import-path\">Emissary/js/signup.js</span>",
+    "function"
+  ],
+  [
+    "emissary/js/appointments.js~companydata",
+    "variable/index.html#static-variable-companyData",
+    "<span>companyData</span> <span class=\"search-result-import-path\">Emissary/js/appointments.js</span>",
+    "variable"
+  ],
+  [
+    "emissary/js/checkin.js~companydata",
+    "variable/index.html#static-variable-companyData",
+    "<span>companyData</span> <span class=\"search-result-import-path\">Emissary/js/checkin.js</span>",
+    "variable"
+  ],
+  [
+    "emissary/js/employees.js~companydata",
+    "variable/index.html#static-variable-companyData",
+    "<span>companyData</span> <span class=\"search-result-import-path\">Emissary/js/employees.js</span>",
+    "variable"
+  ],
+  [
+    "emissary/js/settings.js~companydata",
+    "variable/index.html#static-variable-companyData",
+    "<span>companyData</span> <span class=\"search-result-import-path\">Emissary/js/settings.js</span>",
+    "variable"
+  ],
+  [
+    "emissary/js/appointments.js~compiledhtml",
+    "variable/index.html#static-variable-compiledHtml",
+    "<span>compiledHtml</span> <span class=\"search-result-import-path\">Emissary/js/appointments.js</span>",
+    "variable"
+  ],
+  [
+    "emissary/js/employees.js~compiledhtml",
+    "variable/index.html#static-variable-compiledHtml",
+    "<span>compiledHtml</span> <span class=\"search-result-import-path\">Emissary/js/employees.js</span>",
+    "variable"
+  ],
+  [
+    "emissary/js/settings.js~compiledhtml",
+    "variable/index.html#static-variable-compiledHtml",
+    "<span>compiledHtml</span> <span class=\"search-result-import-path\">Emissary/js/settings.js</span>",
+    "variable"
+  ],
+  [
+    "emissary/js/appointments.js~curuser",
+    "variable/index.html#static-variable-curUser",
+    "<span>curUser</span> <span class=\"search-result-import-path\">Emissary/js/appointments.js</span>",
+    "variable"
+  ],
+  [
+    "emissary/js/employees.js~curuser",
+    "variable/index.html#static-variable-curUser",
+    "<span>curUser</span> <span class=\"search-result-import-path\">Emissary/js/employees.js</span>",
+    "variable"
+  ],
+  [
+    "emissary/js/settings.js~curuser",
+    "variable/index.html#static-variable-curUser",
+    "<span>curUser</span> <span class=\"search-result-import-path\">Emissary/js/settings.js</span>",
+    "variable"
+  ],
+  [
+    "emissary/js/employees.js~employees",
+    "variable/index.html#static-variable-employees",
+    "<span>employees</span> <span class=\"search-result-import-path\">Emissary/js/employees.js</span>",
+    "variable"
+  ],
+  [
+    "emissary/js/settings.js~employees",
+    "variable/index.html#static-variable-employees",
+    "<span>employees</span> <span class=\"search-result-import-path\">Emissary/js/settings.js</span>",
+    "variable"
+  ],
+  [
+    "emissary/js/employees.js~findemployee",
+    "function/index.html#static-function-findEmployee",
+    "<span>findEmployee</span> <span class=\"search-result-import-path\">Emissary/js/employees.js</span>",
+    "function"
+  ],
+  [
+    "emissary/js/appointments.js~formatdate",
+    "function/index.html#static-function-formatDate",
+    "<span>formatDate</span> <span class=\"search-result-import-path\">Emissary/js/appointments.js</span>",
+    "function"
+  ],
+  [
+    "emissary/js/appointments.js~formatnumber",
+    "function/index.html#static-function-formatNumber",
+    "<span>formatNumber</span> <span class=\"search-result-import-path\">Emissary/js/appointments.js</span>",
+    "function"
+  ],
+  [
+    "emissary/js/appointments.js~formattime",
+    "function/index.html#static-function-formatTime",
+    "<span>formatTime</span> <span class=\"search-result-import-path\">Emissary/js/appointments.js</span>",
+    "function"
+  ],
+  [
+    "emissary/js/appointments.js~getappts",
+    "function/index.html#static-function-getAppts",
+    "<span>getAppts</span> <span class=\"search-result-import-path\">Emissary/js/appointments.js</span>",
+    "function"
+  ],
+  [
+    "emissary/js/checkin.js~getcookie",
+    "function/index.html#static-function-getCookie",
+    "<span>getCookie</span> <span class=\"search-result-import-path\">Emissary/js/checkin.js</span>",
+    "function"
+  ],
+  [
+    "emissary/js/settings.js~getemployee",
+    "function/index.html#static-function-getEmployee",
+    "<span>getEmployee</span> <span class=\"search-result-import-path\">Emissary/js/settings.js</span>",
+    "function"
+  ],
+  [
+    "emissary/js/employees.js~getemployees",
+    "function/index.html#static-function-getEmployees",
+    "<span>getEmployees</span> <span class=\"search-result-import-path\">Emissary/js/employees.js</span>",
+    "function"
+  ],
+  [
+    "emissary/js/signup.js~grabcompanydata",
+    "function/index.html#static-function-grabCompanyData",
+    "<span>grabCompanyData</span> <span class=\"search-result-import-path\">Emissary/js/signup.js</span>",
+    "function"
+  ],
+  [
+    "emissary/js/signup.js~grabemployeedata",
+    "function/index.html#static-function-grabEmployeeData",
+    "<span>grabEmployeeData</span> <span class=\"search-result-import-path\">Emissary/js/signup.js</span>",
+    "function"
+  ],
+  [
+    "emissary/js/appointments.js~grabformelements",
+    "function/index.html#static-function-grabFormElements",
+    "<span>grabFormElements</span> <span class=\"search-result-import-path\">Emissary/js/appointments.js</span>",
+    "function"
+  ],
+  [
+    "emissary/js/checkin.js~grabformelements",
+    "function/index.html#static-function-grabFormElements",
+    "<span>grabFormElements</span> <span class=\"search-result-import-path\">Emissary/js/checkin.js</span>",
+    "function"
+  ],
+  [
+    "emissary/js/employees.js~grabformelements",
+    "function/index.html#static-function-grabFormElements",
+    "<span>grabFormElements</span> <span class=\"search-result-import-path\">Emissary/js/employees.js</span>",
+    "function"
+  ],
+  [
+    "emissary/js/settings.js~grabformelementsupdate",
+    "function/index.html#static-function-grabFormElementsUpdate",
+    "<span>grabFormElementsUpdate</span> <span class=\"search-result-import-path\">Emissary/js/settings.js</span>",
     "function"
   ],
   [
@@ -24,6 +210,150 @@ window.esdocSearchIndex = [
     "function"
   ],
   [
+    "emissary/js/appointments.js~initializeappts",
+    "function/index.html#static-function-initializeAppts",
+    "<span>initializeAppts</span> <span class=\"search-result-import-path\">Emissary/js/appointments.js</span>",
+    "function"
+  ],
+  [
+    "emissary/js/appointments.js~jsdate",
+    "function/index.html#static-function-jsDate",
+    "<span>jsDate</span> <span class=\"search-result-import-path\">Emissary/js/appointments.js</span>",
+    "function"
+  ],
+  [
+    "emissary/js/appointments.js~mycompanyid",
+    "variable/index.html#static-variable-myCompanyId",
+    "<span>myCompanyId</span> <span class=\"search-result-import-path\">Emissary/js/appointments.js</span>",
+    "variable"
+  ],
+  [
+    "emissary/js/employees.js~mycompanyid",
+    "variable/index.html#static-variable-myCompanyId",
+    "<span>myCompanyId</span> <span class=\"search-result-import-path\">Emissary/js/employees.js</span>",
+    "variable"
+  ],
+  [
+    "emissary/js/settings.js~mycompanyid",
+    "variable/index.html#static-variable-myCompanyId",
+    "<span>myCompanyId</span> <span class=\"search-result-import-path\">Emissary/js/settings.js</span>",
+    "variable"
+  ],
+  [
+    "emissary/js/checkin.js~ontouchmove",
+    "function/index.html#static-function-ontouchmove",
+    "<span>ontouchmove</span> <span class=\"search-result-import-path\">Emissary/js/checkin.js</span>",
+    "function"
+  ],
+  [
+    "emissary/js/appointments.js~reformatdate",
+    "function/index.html#static-function-reFormatDate",
+    "<span>reFormatDate</span> <span class=\"search-result-import-path\">Emissary/js/appointments.js</span>",
+    "function"
+  ],
+  [
+    "emissary/js/appointments.js~reformattime",
+    "function/index.html#static-function-reFormatTime",
+    "<span>reFormatTime</span> <span class=\"search-result-import-path\">Emissary/js/appointments.js</span>",
+    "function"
+  ],
+  [
+    "emissary/js/checkin.js~socket",
+    "variable/index.html#static-variable-socket",
+    "<span>socket</span> <span class=\"search-result-import-path\">Emissary/js/checkin.js</span>",
+    "variable"
+  ],
+  [
+    "emissary/js/appointments.js~source",
+    "variable/index.html#static-variable-source",
+    "<span>source</span> <span class=\"search-result-import-path\">Emissary/js/appointments.js</span>",
+    "variable"
+  ],
+  [
+    "emissary/js/employees.js~source",
+    "variable/index.html#static-variable-source",
+    "<span>source</span> <span class=\"search-result-import-path\">Emissary/js/employees.js</span>",
+    "variable"
+  ],
+  [
+    "emissary/js/settings.js~source",
+    "variable/index.html#static-variable-source",
+    "<span>source</span> <span class=\"search-result-import-path\">Emissary/js/settings.js</span>",
+    "variable"
+  ],
+  [
+    "emissary/js/checkin.js~startcheckin",
+    "function/index.html#static-function-startCheckIn",
+    "<span>startCheckIn</span> <span class=\"search-result-import-path\">Emissary/js/checkin.js</span>",
+    "function"
+  ],
+  [
+    "emissary/js/appointments.js~submitform",
+    "function/index.html#static-function-submitForm",
+    "<span>submitForm</span> <span class=\"search-result-import-path\">Emissary/js/appointments.js</span>",
+    "function"
+  ],
+  [
+    "emissary/js/checkin.js~submitform",
+    "function/index.html#static-function-submitForm",
+    "<span>submitForm</span> <span class=\"search-result-import-path\">Emissary/js/checkin.js</span>",
+    "function"
+  ],
+  [
+    "emissary/js/employees.js~submitform",
+    "function/index.html#static-function-submitForm",
+    "<span>submitForm</span> <span class=\"search-result-import-path\">Emissary/js/employees.js</span>",
+    "function"
+  ],
+  [
+    "emissary/js/appointments.js~template",
+    "variable/index.html#static-variable-template",
+    "<span>template</span> <span class=\"search-result-import-path\">Emissary/js/appointments.js</span>",
+    "variable"
+  ],
+  [
+    "emissary/js/employees.js~template",
+    "variable/index.html#static-variable-template",
+    "<span>template</span> <span class=\"search-result-import-path\">Emissary/js/employees.js</span>",
+    "variable"
+  ],
+  [
+    "emissary/js/settings.js~template",
+    "variable/index.html#static-variable-template",
+    "<span>template</span> <span class=\"search-result-import-path\">Emissary/js/settings.js</span>",
+    "variable"
+  ],
+  [
+    "emissary/js/appointments.js~updateapptlist",
+    "function/index.html#static-function-updateApptList",
+    "<span>updateApptList</span> <span class=\"search-result-import-path\">Emissary/js/appointments.js</span>",
+    "function"
+  ],
+  [
+    "emissary/js/checkin.js~updateclock",
+    "function/index.html#static-function-updateClock",
+    "<span>updateClock</span> <span class=\"search-result-import-path\">Emissary/js/checkin.js</span>",
+    "function"
+  ],
+  [
+    "emissary/js/settings.js~updateemployee",
+    "function/index.html#static-function-updateEmployee",
+    "<span>updateEmployee</span> <span class=\"search-result-import-path\">Emissary/js/settings.js</span>",
+    "function"
+  ],
+  [
+    "emissary/js/settings.js~updateemployeeinfo",
+    "function/index.html#static-function-updateEmployeeInfo",
+    "<span>updateEmployeeInfo</span> <span class=\"search-result-import-path\">Emissary/js/settings.js</span>",
+    "function"
+  ],
+  [
+    "emissary/js/employees.js~updateemployeelist",
+    "function/index.html#static-function-updateEmployeeList",
+    "<span>updateEmployeeList</span> <span class=\"search-result-import-path\">Emissary/js/employees.js</span>",
+    "function"
+  ],
+  [
     "emissary/js/dashboard.js~userstate",
     "variable/index.html#static-variable-userState",
     "<span>userState</span> <span class=\"search-result-import-path\">Emissary/js/dashboard.js</span>",
@@ -34,6 +364,24 @@ window.esdocSearchIndex = [
     "variable/index.html#static-variable-userState",
     "<span>userState</span> <span class=\"search-result-import-path\">Emissary/js/shared.js</span>",
     "variable"
+  ],
+  [
+    "emissary/js/signup.js~validatecompany",
+    "function/index.html#static-function-validateCompany",
+    "<span>validateCompany</span> <span class=\"search-result-import-path\">Emissary/js/signup.js</span>",
+    "function"
+  ],
+  [
+    "emissary/js/signup.js~validateemail",
+    "function/index.html#static-function-validateEmail",
+    "<span>validateEmail</span> <span class=\"search-result-import-path\">Emissary/js/signup.js</span>",
+    "function"
+  ],
+  [
+    "emissary/js/signup.js~validateform",
+    "function/index.html#static-function-validateForm",
+    "<span>validateForm</span> <span class=\"search-result-import-path\">Emissary/js/signup.js</span>",
+    "function"
   ],
   [
     "builtinexternal/ecmascriptexternal.js~array",

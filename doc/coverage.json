@@ -1,19 +1,73 @@
 {
-  "coverage": "100%",
-  "expectCount": 6,
-  "actualCount": 6,
+  "coverage": "60.93%",
+  "expectCount": 64,
+  "actualCount": 39,
   "files": {
+    "js/checkin.js": {
+      "expectCount": 10,
+      "actualCount": 6,
+      "undocumentLines": [
+        6,
+        5,
+        8,
+        3
+      ]
+    },
     "js/login.js": {
       "expectCount": 4,
       "actualCount": 4,
       "undocumentLines": []
     },
-    "js/dashboard.js": {
+    "js/signup.js": {
+      "expectCount": 7,
+      "actualCount": 7,
+      "undocumentLines": []
+    },
+    "js/appointments.js": {
+      "expectCount": 18,
+      "actualCount": 11,
+      "undocumentLines": [
+        9,
+        3,
+        29,
+        5,
+        4,
+        27,
+        28
+      ]
+    },
+    "js/employees.js": {
+      "expectCount": 12,
+      "actualCount": 5,
+      "undocumentLines": [
+        2,
+        14,
+        7,
+        10,
+        3,
+        12,
+        13
+      ]
+    },
+    "js/settings.js": {
+      "expectCount": 11,
+      "actualCount": 4,
+      "undocumentLines": [
+        2,
+        14,
+        8,
+        10,
+        3,
+        12,
+        13
+      ]
+    },
+    "js/shared.js": {
       "expectCount": 1,
       "actualCount": 1,
       "undocumentLines": []
     },
-    "js/shared.js": {
+    "js/dashboard.js": {
       "expectCount": 1,
       "actualCount": 1,
       "undocumentLines": []

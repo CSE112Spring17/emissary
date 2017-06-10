@@ -1,4 +1,4 @@
-$(document).ready(function(){
+//$(document).ready(function(){
    var companyData = JSON.parse(localStorage.getItem("currentCompany"));
    var myCompanyId = companyData._id;
 
@@ -97,4 +97,4 @@ $(document).ready(function(){
    });
 
 
-});
+//});

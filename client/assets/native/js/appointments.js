@@ -1,13 +1,17 @@
-$(document).ready(function(){
+//$(document).ready(function(){
+
     var companyData = JSON.parse(localStorage.getItem("currentCompany"));
     var myCompanyId = companyData._id;
     var curUser = JSON.parse(localStorage.getItem('currentUser'));
 
-  
     $('#user-name').text(curUser.first_name + ' ' +  curUser.last_name);
 
     var appts = getAppts();
-
+   /***
+     * initializ a list of appts
+     * @param none
+     * @returns displays the appt list
+     */
     function initializeAppts (appts){
       appts.sort(function(a,b){
         return new Date(a.date) - new Date(b.date);
@@ -123,7 +127,11 @@ $(document).ready(function(){
 
 
     /********************* FUNCTIONS TO FORMAT JAVASCRIPT DATES ********************/
-
+    /***
+     * FUNCTIONS TO FORMAT JAVASCRIPT DATES
+     * @param none
+     * @returns a formated dates
+     */
     function formatDate(date){
       var d = new Date(Date.parse(date));
       var mm = d.getMonth() + 1;
@@ -139,11 +147,23 @@ $(document).ready(function(){
       //console.log(monthArray[mm]);
       return  mm + '/' + dd + '/' +  + yyyy;
     }
+
+    /***
+     * FUNCTIONS TO FORMAT A PHONE NUMBER
+     * @param none
+     * @returns a formated phone number
+     */
     function formatNumber(number){
       return '(' + number.substr(0,3) + ')' + number.substr(3,3) + '-' + number.substr(6,4);
     }
 
     //FUNCTION TO FORMAT DATE OBJECT IN JS
+
+     /***
+     * FUNCTION TO FORMAT DATE OBJECT IN JS
+     * @param none
+     * @returns a formated dates in JSON
+     */
     function jsDate(date,time){
       var jsDate = reFormatDate(date);
       var jsTime = reFormatTime(time);
@@ -152,6 +172,12 @@ $(document).ready(function(){
     }
 
     //FUNCTION TO FORMAT DATE TO JS FOR ROBOTS
+
+     /***
+     * FUNCTION TO FORMAT DATE TO JS FOR ROBOTS
+     * @param none
+     * @returns a formated date
+     */
     function reFormatDate(date){
       var d = new Date(Date.parse(date));
       var mm = d.getMonth() + 1;
@@ -169,6 +195,12 @@ $(document).ready(function(){
 
 
     //FUNCTION TO FORMAT TIME TO JS FOR ROBOTS
+
+     /***
+     * FUNCTION TO FORMAT TIME TO JS FOR ROBOTS
+     * @param none
+     * @returns a formated date
+     */
     function reFormatTime(time){
       var ampm = time.substr(-2,2);
       var formattedTime;
@@ -202,6 +234,12 @@ $(document).ready(function(){
 
 
     //FUNCTION TO FORMAT TIME TO AM AND PM FOR HUMANS
+
+     /***
+     * FUNCTION TO FORMAT TIME TO AM AND PM FOR HUMANS
+     * @param none
+     * @returns a formated date
+     */
     function formatTime(time){
         var currentTime = new Date(Date.parse(time));
         var hour = currentTime.getHours();
@@ -230,4 +268,4 @@ $(document).ready(function(){
 
     }
 
-});
+//});

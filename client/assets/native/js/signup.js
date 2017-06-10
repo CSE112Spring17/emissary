@@ -1,7 +1,7 @@
 /**
  * Created by DanielKong on 3/8/16.
  */
-$(document).ready(function(){
+//$(document).ready(function(){
 
     var companyId;
 
@@ -21,6 +21,11 @@ $(document).ready(function(){
     })
 
     //Grab Company Data from form
+                /***
+     * Grab Company Data from form
+     * @param None
+     * @returns company object
+     */
     function grabCompanyData(){
         var company = {};
         company.name = $('#form-company-name').val();
@@ -31,6 +36,11 @@ $(document).ready(function(){
     }
 
     //Grab employee data from form
+            /***
+     * Grab employee data from form
+     * @param None
+     * @returns employee object
+     */
     function grabEmployeeData(){
         var employee = {};
         employee.first_name = $('#form-employee-first').val();
@@ -44,6 +54,11 @@ $(document).ready(function(){
     }
 
     //Ajax function to create a POST request to server
+        /***
+     * Ajax function to create a POST request to server
+     * @param None
+     * @returns None
+     */
     function ajaxPost(url, data){
         $.ajax({
             type: "POST",
@@ -71,7 +86,11 @@ $(document).ready(function(){
             }
         });
     }
-
+    /***
+     * validate the company information
+     * @param None
+     * @returns boolean
+     */
     function validateCompany(){
         var companyName = $('#form-company-name').val();
         var companyEmail = $('#form-email').val();
@@ -91,12 +110,20 @@ $(document).ready(function(){
     }
 
 
-
+    /***
+     * validate if it is a valid Email address
+     * @param None
+     * @returns boolean
+     */
     function validateEmail(email) {
         var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return re.test(email);
     }
-
+    /***
+     * validate if it is a valid password
+     * @param None
+     * @returns boolean
+     */
     function checkPassword(form){
 
         if(form.first.value == "") {
@@ -144,9 +171,15 @@ $(document).ready(function(){
         console.log("You entered a valid password: " + password.value);
         return true;
     }
+
+    /***
+     * validate the form
+     * @param None
+     * @returns boolean
+     */
     function validateForm(){
 
     }
 
 
-});
+//});

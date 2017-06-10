@@ -1,4 +1,4 @@
-$(document).ready(function(){
+//$(document).ready(function(){
 
     var socket = io();
 
@@ -10,6 +10,11 @@ $(document).ready(function(){
     socket.emit(VALIDATE_COMPANY_ID, companyData);
     
     //Prevent users from scrolling around on iPad
+    /***
+     * Prevent users from scrolling around on iPad
+     * @param None
+     * @returns None
+     */
     document.ontouchmove = function(e) {
         e.preventDefault();
     };
@@ -19,6 +24,11 @@ $(document).ready(function(){
     $('.check-in').on('submit', submitForm);
 
     //When a user starts their check in
+             /***
+     * When a user starts their check in
+     * @param None
+     * @returns None
+     */
     function startCheckIn(){
         $('.check-in').addClass('show');
         $('.check-in').animate({
@@ -30,6 +40,12 @@ $(document).ready(function(){
     }
 
     //When a patient submits their form
+
+         /***
+     * When a patient submits their form
+     * @param None
+     * @returns None
+     */
     function submitForm(){
         //event.preventDefault();
         var data = grabFormElements();
@@ -54,6 +70,11 @@ $(document).ready(function(){
 
     }
     //Grabs elements from the check in and puts it into an object
+     /***
+     * Grabs elements from the check in and puts it into an object
+     * @param None
+     * @returns new visitor object
+     */
     function grabFormElements(){
         var newVisitor = {};
         newVisitor.company_id = companyData._id;
@@ -64,7 +85,11 @@ $(document).ready(function(){
         return newVisitor;
     }
 
-    //CLOCK
+     /***
+     * updates the clock
+     * @param None
+     * @returns None
+     */
     function updateClock () {
         var currentTime = new Date ( );
         var currentHours = currentTime.getHours ( );
@@ -108,4 +133,4 @@ $(document).ready(function(){
     }
 
 
-});
+//});
