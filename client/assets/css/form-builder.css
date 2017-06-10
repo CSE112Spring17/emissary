@@ -89,3 +89,13 @@ h1.page-title{
 	margin-bottom: 15px;
 
 }
+
+.form-builder {
+    width: 80%;
+    max-width: 800px;
+    margin: 25px auto;
+}
+
+.pull-right {
+    margin-right: 0px;
+}

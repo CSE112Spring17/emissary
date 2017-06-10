@@ -122,6 +122,9 @@ app.get('/forgot-password', function(req,res){
 app.get('/form-builder', function(req,res){
   res.sendFile(path.join(__dirname,'../dist/assets/views/form-builder.html'))
 });
+app.get('/forms', function(req,res){
+  res.sendFile(path.join(__dirname,'../dist/assets/views/forms.html'))
+});
 app.get('/login', function(req,res){
   res.sendFile(path.join(__dirname,'../dist/assets/views/login.html'))
 });

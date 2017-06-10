@@ -17,8 +17,9 @@ module.exports.template.findByCompanyId =  function(req, res) {
   TemplateForm.find({'company_id' : new ObjectId(req.params.id)}, function(err, template) {
     if(err)
       res.status(400).json({error: "There was an error finding the template form."});
-    else
+    else{
       res.status(200).json(template);
+    }
   });
 };
 
@@ -78,10 +79,13 @@ module.exports.template.create =  function(req, res) {
   }
 
   
-  var format = req.body.format; //request body
+  var format = JSON.parse(req.body.format); //request body
   var to_store = [format.length]; //will store the object
-
   //set up the format for storing
+  if(format.length < 1){
+    res.status(400).json({error: "You must have at least one element in your format."});
+    return;
+  }
   for (var i=0; i<format.length; i++) {
     var required_val;
     var label_val;
