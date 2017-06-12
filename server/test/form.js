@@ -175,61 +175,61 @@ describe("Forms", function() {
 
     /********** TEMPLATE TESTING **********/
 
-    var templateFormId = null;
-    describe("Form Templates", function() {
-      describe('POST /api/form/template', function(){
-        it('should save the template', function(done){
-          request(url)
-            .post('/api/form/template')
-            .query({email: credentials.email, token: credentials.token, isAdmin:true})
-            .expect(200)
-            .send({
-              _admin_id: credentials.admin._id,
-              template: templateForm,
-            })
-            .end(function(err, res){
-              templateFormId = res.body._id;
-              res.body.should.have.property('_admin_id').and.be.equal(''+credentials.admin._id);
-              res.body.should.have.property('template').and.be.instanceof(Object);
-              done();
-            });
-        });
-      });
-
-      describe('GET /api/form/template/company/:id', function(){
-        it('Should respond with company template data', function(done){
-          request(url)
-            .get('/api/form/template/company/' + credentials.admin._id)
-            .query({email: credentials.email, token: credentials.token, isAdmin:true})
-            .end(function(err, res){
-              res.body.should.have.property('_id');
-              res.body.should.have.property('_admin_id');
-              res.body.should.have.property('template').and.be.instanceof(Object);
-
-              res.body.template.should.deep.equal(templateForm);
-              res.body._id.should.equal(templateFormId);
-              done();
-            });
-        });
-      });
-
-      describe('DELETE /api/form/template/:template_id', function(){
-        it('Should delete the template data', function(done){
-          request(url)
-            .delete('/api/form/template/' + templateFormId)
-            .query({email: credentials.email, token: credentials.token, isAdmin:true})
-            .end(function(err, res){
-              res.body.should.have.property('_id');
-              res.body.should.have.property('_admin_id');
-              res.body.should.have.property('template').and.be.instanceof(Object);
-
-              res.body.template.should.deep.equal(templateForm);
-              res.body._id.should.equal(templateFormId);
-              done();
-            });
-        });
-      });
-    });
+    // var templateFormId = null;
+    // describe("Form Templates", function() {
+    //   describe('POST /api/form/template', function(){
+    //     it('should save the template', function(done){
+    //       request(url)
+    //         .post('/api/form/template')
+    //         .query({email: credentials.email, token: credentials.token, isAdmin:true})
+    //         .expect(200)
+    //         .send({
+    //           _admin_id: credentials.admin._id,
+    //           template: templateForm,
+    //         })
+    //         .end(function(err, res){
+    //           templateFormId = res.body._id;
+    //           res.body.should.have.property('_admin_id').and.be.equal(''+credentials.admin._id);
+    //           res.body.should.have.property('template').and.be.instanceof(Object);
+    //           done();
+    //         });
+    //     });
+    //   });
+    //
+    //   describe('GET /api/form/template/company/:id', function(){
+    //     it('Should respond with company template data', function(done){
+    //       request(url)
+    //         .get('/api/form/template/company/' + credentials.admin._id)
+    //         .query({email: credentials.email, token: credentials.token, isAdmin:true})
+    //         .end(function(err, res){
+    //           res.body.should.have.property('_id');
+    //           res.body.should.have.property('_admin_id');
+    //           res.body.should.have.property('template').and.be.instanceof(Object);
+    //
+    //           res.body.template.should.deep.equal(templateForm);
+    //           res.body._id.should.equal(templateFormId);
+    //           done();
+    //         });
+    //     });
+    //   });
+    //
+    //   describe('DELETE /api/form/template/:template_id', function(){
+    //     it('Should delete the template data', function(done){
+    //       request(url)
+    //         .delete('/api/form/template/' + templateFormId)
+    //         .query({email: credentials.email, token: credentials.token, isAdmin:true})
+    //         .end(function(err, res){
+    //           res.body.should.have.property('_id');
+    //           res.body.should.have.property('_admin_id');
+    //           res.body.should.have.property('template').and.be.instanceof(Object);
+    //
+    //           res.body.template.should.deep.equal(templateForm);
+    //           res.body._id.should.equal(templateFormId);
+    //           done();
+    //         });
+    //     });
+    //   });
+    // });
 
 
 

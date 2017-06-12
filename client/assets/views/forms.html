@@ -8,9 +8,9 @@
     <meta name="description" content="Neon Admin Panel" />
     <meta name="author" content="" />
 
-    <link rel="icon" href="assets/images/logo-omni.png">
+    <link rel="icon" href="assets/images/logo-emissary.png">
 
-    <title>Emissary | Appointments</title>
+    <title>Emissary | Forms</title>
 
     <link rel="stylesheet" href="assets/font-awesome/css/font-awesome.css">
     <link rel="stylesheet" href="assets/js/jquery-ui/css/no-theme/jquery-ui-1.10.3.custom.min.css">
@@ -21,12 +21,19 @@
     <link rel="stylesheet" href="assets/css/neon-theme.css">
     <link rel="stylesheet" href="assets/css/neon-forms.css">
     <link rel="stylesheet" href="assets/css/custom.css">
-    <link rel="stylesheet" href="assets/native/css/appointment.css">
+    <link rel="stylesheet" href="assets/native/css/forms.css">
     <link rel="stylesheet" href="assets/native/css/shared-dashboard.css">
     <link rel="stylesheet" href="assets/native/css/shared-dashboard.css">
     <!-- <link rel="stylesheet" href="assets/native/css/employees.css"> -->
 
     <script src="assets/js/jquery-1.11.3.min.js"></script>
+    <script type = "text/javascript" src= "assets/js/handlebars-v4.0.5.js"></script>
+    <script src="assets/js/bootstrap.js"></script>
+
+    <!-- alpaca -->
+    <link type="text/css" href="//code.cloudcms.com/alpaca/1.5.23/bootstrap/alpaca.min.css" rel="stylesheet"/>
+    <script type="text/javascript" src="//code.cloudcms.com/alpaca/1.5.23/bootstrap/alpaca.min.js"></script>
+
     <script src="assets/js/js.cookie.js"></script>
     <script src="assets/native/js/auth-cookies.js"></script>
     <script type ="text/javascript" src = "assets/native/js/helper_functions.js"> </script>
@@ -52,7 +59,7 @@
                 <!-- logo -->
                 <div class="logo">
                     <a href="index.html">
-                        <img src="images/logo-omni2-white.png" width="150" alt="" />
+                        <img src="images/emissary.png" width="150" alt="" />
                     </a>
                 </div>
 
@@ -153,164 +160,52 @@
         </div>
 
         <hr />
-        <h1 class="page-title">Appointments</h1>
-        <ul id="appt-navbar">
-          <li class="appt-navbar_li"><a class="appt-navbar_a appt-navbar_active" href="appointments">Current</a></li>
-          <li class="appt-navbar_li"><a class="appt-navbar_a" href="appointment_history">History</a></li>
-        </ul>
-        <div class="appt-container">
+        <!-- Form Viewer Modal -->
+        <div id="myModal" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="form-viewer"></div>
+        </div>
+
+        </div>
+        <div class="form-container">
             <div>
+                <h1 class="page-title">Forms</h1>
+
                 <table class="table">
                     <thead>
                     <tr>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Provider Name</th>
-                        <th>Phone Number</th>
-                        <th>Date</th>
-                        <th>Time</th>
+                        <th>Form Name</th>
+                        <th id="delete-header"> Delete</th>
                     </tr>
                     </thead>
 
-                    <tbody id= "appt-list">
+                    <tbody id= "form-list">
                     <!-- HANDLE BAR TEMPLATES -->
 
                     </tbody>
                 </table>
             </div>
 
-            <div class="modal fade" id="myModal" tabindex="-1" role="dialog"
-                 aria-labelledby="myModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <!-- Modal Header -->
-                        <div class="modal-header">
-                            <button type="button" class="close"
-                                    data-dismiss="modal">
-                                <span aria-hidden="true">&times;</span>
-                                <span class="sr-only">Close</span>
-                            </button>
-                            <h4 class="modal-title" id="myModalLabel">
-                                Add an Appointment
-                            </h4>
-                        </div>
-
-                        <!-- Modal Body -->
-                        <div class="modal-body">
-
-                            <form class="form-horizontal" role="form" id="appt-form">
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label"
-                                           for="first-name" >First Name</label>
-                                    <div class="col-sm-10">
-                                        <input type="text" class="form-control"
-                                               id="appt-first" placeholder="First Name"/>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label"
-                                           for="last-name" >Last Name</label>
-                                    <div class="col-sm-10">
-                                        <input type="text" class="form-control"
-                                               id="appt-last" placeholder="Last Name"/>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label"
-                                           for="email" >Email</label>
-                                    <div class="col-sm-10">
-                                        <input type="text" class="form-control"
-                                               id="appt-email" placeholder="Email"/>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label"
-                                           for="phone-number" >Phone</label>
-                                    <div class="col-sm-10">
-                                        <input type="text" class="form-control"
-                                               id="appt-number" placeholder="Phone Number"/>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label"
-                                           for="inputPassword3" >Provider Name</label>
-                                    <div class="col-sm-10">
-                                        <input type="text" class="form-control"
-                                               id="appt-provider" placeholder="Provider Name"/>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label"
-                                           for="inputPassword3" >Date</label>
-                                    <div class="col-sm-10">
-                                        <input type="text" class="form-control"
-                                               id="appt-date" placeholder="Appointment Date"/>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="col-sm-2 control-label"
-                                           for="inputPassword3" >Time</label>
-                                    <div class="col-sm-10">
-                                        <input type="text" class="form-control"
-                                               id="appt-time" placeholder="Appointment Time"/>
-                                    </div>
-                                </div>
-
-                            </form>
-
-                            <p class='message-api'> To connect your appointment information to our system, please refer to our appointments api, <a href= "/assets/images/appointments.pdf" target= "_blank"> here</a></p>
-
-                        </div>
-
-                        <!-- Modal Footer -->
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-default"
-                                    data-dismiss="modal">
-                                Close
-                            </button>
-                            <button type="button" class="check-in-btn btn btn-default save-btn" data-dismiss="modal">Save</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="confirmation" class="confirmation">
-
-                <!-- Modal content -->
-                <div class="modal-content confirmation-content">
-                    <h4 class="modal-title">Mark appointment as cancelled?</h4>
-                    <button type="button" class="btn btn-default button-yes">Yes</button>
-                    <button type="button" class="btn btn-default button-no">No</button>
-                </div>
-
-            </div>
-
-            <div class="add-button" data-toggle="modal" data-target="#myModal">Add Appointment</div>
+            
+            <div class = "add-button" > Add Form</div>
 
         </div>
 
-        <script type = "text/x-handlebars-template" id = "appt-list-template">
+        <script type = "text/x-handlebars-template" id = "form-list-template">
             {{#each []}}
-            <tr class="appt-row" value="{{this._id}}">
-                <td class="appt-data">{{this.first_name}}</td>
-                <td class="appt-data">{{this.last_name}}</td>
-                <td class="appt-data">{{this.provider_name}}</td>
-                <td class="appt-data">{{this.phone_number}}</td>
-                <td class="appt-data">{{this.fullDate}}</td>
-                <td class="appt-data">{{this.appointmentTime}}
-                    <i class="fa fa-trash-o delete-appt"></i>
+            <tr class="form-row" value="{{this._id}}">
+                <td class="form-data view-form">{{this.name}}
+                </td>
+                <td class="form-data delete-cell">
+                    <i class="fa fa-trash-o delete-form"></i>
                 </td>
             </tr>
             {{/each}}
         </script>
     </div>
-
-
 
 
     <!-- Imported styles on this page -->
@@ -320,7 +215,6 @@
     <!-- Bottom scripts (common) -->
     <script src="assets/js/gsap/TweenMax.min.js"></script>
     <script src="assets/js/jquery-ui/js/jquery-ui-1.10.3.minimal.min.js"></script>
-    <script src="assets/js/bootstrap.js"></script>
     <script src="assets/js/joinable.js"></script>
     <script src="assets/js/resizeable.js"></script>
     <script src="assets/js/neon-api.js"></script>
@@ -337,9 +231,7 @@
     <script src="assets/js/toastr.js"></script>
     <script src="assets/js/fullcalendar/fullcalendar.min.js"></script>
     <script src="assets/js/neon-chat.js"></script>-->
-
-    <script type = "text/javascript" src= "assets/js/handlebars-v4.0.5.js"></script>
-    <script type ="text/javascript" src = "assets/native/js/appointments.js"> </script>
+    <script type ="text/javascript" src = "assets/native/js/forms.js"> </script>
 
 
     <!-- JavaScripts initializations and stuff -->

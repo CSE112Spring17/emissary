@@ -19,3 +19,4 @@ mobile/www/*
 *.iml
 
 coverage/
+prep.py
