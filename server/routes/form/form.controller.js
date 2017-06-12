@@ -6,6 +6,7 @@
 var express = require('express');
 var router = express.Router();
 var SubmittedForm = require('../../models/form/SubmittedForm');
+var Forms = require('../../models/form/forms');
 var mongoose = require('mongoose');
 var ObjectId = mongoose.Types.ObjectId;
 var TemplateForm = require('../../models/form/FormTemplate');
@@ -19,6 +20,47 @@ module.exports.template.findByCompanyId =  function(req, res) {
       res.status(400).json({error: "There was an error finding the template form."});
     else{
       res.status(200).json(template);
+    }
+  });
+};
+module.exports.template.findByTemplateId =  function(req, res) {
+  TemplateForm.findOne({'_id' : new ObjectId(req.params.template_id)}, function(err, template) {
+    if(err)
+      res.status(400).json({error: "There was an error finding the template form."});
+    else{
+
+
+      var retObj = {}
+      retObj["title"] = template.name;
+      retObj["properties"] = {};
+      retObj["fields"] = {};
+      var obj = template.format;
+      var i = 0;
+      for(var i = 0; i < obj.length ; i++){
+        retObj["properties"][obj[i].name] = {}
+        retObj["properties"][obj[i].name]["title"] = obj[i].label;
+        retObj["properties"][obj[i].name]["required"] = obj[i].required;
+
+        if(obj[i].type == "text"){
+          retObj["properties"][obj[i].name]["type"] = "string";
+        }
+        else if(obj[i].type == "email") {
+          retObj["properties"][obj[i].name]["format"] = "email";
+        }
+        else if(obj[i].type == "tel") {
+          retObj["properties"][obj[i].name]["format"] = "phone";
+        }
+        else if(obj[i].type == "date") {
+          retObj["properties"][obj[i].name]["format"] = "date";
+          retObj["fields"][obj[i].name] = {
+            "helper":"DD/MM/YYYY"
+          };
+        }
+        else if(obj[i].type == "number") {
+          retObj["properties"][obj[i].name]["type"] = "number";
+        }
+      }
+      res.status(200).json(retObj);
     }
   });
 };
@@ -90,6 +132,7 @@ module.exports.template.create =  function(req, res) {
     var required_val;
     var label_val;
     var type_val;
+    var name_val = format[i].name;
     //set required
     if("required" in format[i]){
       required_val = format[i].required;
@@ -117,7 +160,8 @@ module.exports.template.create =  function(req, res) {
     to_store[i] = {
       type: type_val,
       label: label_val,
-      required: required_val
+      required: required_val,
+      name: name_val
     }
   }
 
@@ -132,7 +176,7 @@ module.exports.template.create =  function(req, res) {
   
    var newTemplate = new TemplateForm();
    newTemplate.company_id = new mongoose.Types.ObjectId(storing_object.company_id);
-   newTemplate.format = req.body.format;
+   newTemplate.format = storing_object.format;
    newTemplate.name = req.body.name;
 
    newTemplate.save(function(err, template) {
@@ -240,4 +284,44 @@ module.exports.submitted_form.findByPatientInfo = function(req, res) {
       res.status(200).json(submittedForms);
     });
   }
+};
+
+/********** GENERIC FORM ROUTES **********/
+module.exports.forms = {};
+
+
+module.exports.forms.create = function(req, res) {
+  var to_save = {};
+  var i = 1;
+  for (var key in req.body){
+    var title = req.body[key].title;
+    var ts_value = "";
+    var type_val;
+    if (title in to_save){
+      title = title + "("+i+")";
+      i++;
+    }
+    if("value" in req.body[key]){
+      ts_value = req.body[key]["value"];
+    }
+    if("format" in req.body[key]){
+      type_val = req.body[key]["format"];
+    }else{
+      type_val = req.body[key]["type"];
+    }
+    to_save[title] = {
+      required: req.body[key]["required"],
+      type: type_val,
+      value: ts_value
+    }
+  }
+
+  var form = new Forms();
+  form.form = to_save;
+  form.save(function(err, savedForm){
+    if (err){
+      res.status(400).json({error: "An error occured while saving the submitted form"});
+    }
+    res.status(200).json(savedForm);
+  });
 };

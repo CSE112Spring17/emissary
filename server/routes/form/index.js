@@ -10,8 +10,10 @@ var urlparser = bodyparser.urlencoded({extended: false});
 
 //for sure use
 router.get('/template/company/:id', controller.template.findByCompanyId);
+router.get('/template/:template_id', controller.template.findByTemplateId);
 router.delete('/template/:template_id', controller.template.delete);
 router.post('/template', controller.template.create);
+router.post('/store', controller.forms.create);
 
 //don't think we use
 router.get('/template/:adminid',controller.template.findByAdminId);
