@@ -79,10 +79,10 @@ exports.notifyAppointment = function(fname, lname, company_id, date, email) {
   transporter.sendMail(mailOptions, function(error, info) {
     if(error) {
       console.log(error);
-      return error;
+      return 'error';
     } else {
       console.log('Message %s sent: %s', info.messageId, info.response);
-      return 'Message ' + info.messageId + 'sent: ' + info.response;
+      return 'Message sent';
     }
   });
 };

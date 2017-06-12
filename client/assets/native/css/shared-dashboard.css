@@ -20,6 +20,14 @@ body{
   color: #5b677b !important
 }
 
+#logoutButton_side {
+  box-sizing: border-box;
+  float: right;
+  background-color: #01B2BD;
+  color: #FFFFFF;
+  border: 1px solid #188F7F;
+}
+
 /** Begin: Check-In styles */
 .topCheckinButton {
   box-sizing: border-box;
