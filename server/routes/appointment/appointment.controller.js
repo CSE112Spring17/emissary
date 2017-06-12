@@ -181,15 +181,15 @@ module.exports.template.getStats = function(req, res){
 
   var data = [];
 
-  Appointment.find({company_id: req.params.id,status: 'no show'}, function(err, results) {
+  Appointment.find({company_id: req.params.id,status: 'No Show'}, function(err, results) {
     if(err)
       res.status(400).json({error: "Could Not Find"});
     data.push({status: 'no show',count: results.length});
-    Appointment.find({company_id: req.params.id,status: 'show'}, function(err, results) {
+    Appointment.find({company_id: req.params.id,status: 'Show'}, function(err, results) {
       if(err)
         res.status(400).json({error: "Could Not Find"});
       data.push({status: 'show',count: results.length});
-      Appointment.find({company_id: req.params.id,status: 'cancelled'}, function(err, results) {
+      Appointment.find({company_id: req.params.id,status: 'Cancelled'}, function(err, results) {
         if(err)
           res.status(400).json({error: "Could Not Find"});
         data.push({status: 'cancelled',count: results.length});
@@ -201,12 +201,13 @@ module.exports.template.getStats = function(req, res){
             if (list == null) {
               list = new VisitorList();
               list.visitors = [];
-              list.company_id = company_id;
+              list.company_id = req.params.id;
               list.walk_ins = 0;
               list.save();
             }
 
             data.push({status: 'walk-ins', count: list.walk_ins});
+            console.log("Pi Chart Return Json ",data);
             return res.status(200).json(data);
           });
       });

@@ -55,7 +55,7 @@ $(document).ready(function(){
                 if(url == '/api/employees') {
                     localStorage.setItem('userState', 1);
                     localStorage.setItem('currentUser', JSON.stringify(response));
-                    location.href = '/visitors.html';
+                    location.href = '/company-dashboard.html';
                 }
                 else if (url == '/api/companies') {
                     localStorage.setItem('currentCompany', JSON.stringify(response));
