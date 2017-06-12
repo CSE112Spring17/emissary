@@ -9,12 +9,12 @@ const smooch = new Smooch({
     scope: 'app'
 });
 
-var applicationID = ["80bb65113a4d36313b66cc23", "b6e0a6f50804a20a392ba5bc"];
+var applicationID = ["80bb65113a4d36313b66cc23", "b6e0a6f50804a20a392ba5bc", "d7387d2d6e4bf97366aa8a01"];
 
 for (var x = 0; x < applicationID.length; x++) {
    smooch.appUsers.sendMessage(applicationID[x], {
        type: 'text',
-       text: 'CSE 112',
+       text: 'CSE 112 - for Amir',
        role: 'appMaker'
    })
    .then((response) => {
