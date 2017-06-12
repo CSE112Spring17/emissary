@@ -39,12 +39,13 @@ module.exports.template.create = function(req, res) {
             company_id:param.company_id,
             date:param.date
         }, function(err, appointments){
-            if(err) return res.status(400).json({error: "Could Not Find"});
+            if(err) return res.status(400).json({error: "Unable to find any matching company records."});
             if(appointments.length==0) {
                 appointment.save(function (err, a) {
                     if (err) {
-                        return res.status(400).json({error: "Could Not Save"});
-                    } else {
+                      return res.status(400).json({error: "Unable to save appointment entry. Please try again."});
+                    }
+                    else {
                         Email.notifyAppointment(param.first_name,
                                                 param.last_name,
                                                 param.company_id,
@@ -54,7 +55,7 @@ module.exports.template.create = function(req, res) {
                     }
                 });
             }else{
-                return res.status(400).json({error: "Already Created"});
+                return res.status(400).json({error: "An appointment with those properties already exists."});
             }
         });
 };
@@ -83,10 +84,36 @@ module.exports.template.getToday = function(req, res) {
   });
 };
 
+module.exports.template.getAllAppointments = function(req, res) {
+    Appointment.find({}, function(err, result){        
+            if(err){
+                return res.status(400).json("err");
+            }
+            return res.status(200).json(result);
+        });
+};
+
 module.exports.template.get = function(req, res) {
     Appointment.findOne({_id: req.params.id}, function(err, a) {
         if(err || !a)
             return res.status(400).send({error: "Could Not Find"});
+        return res.status(200).json(a);
+    });
+};
+
+module.exports.template.lookupProviderName = function(req, res) {
+    //Thinking this should be findAll           
+    Appointment.findOne({provider_name: req.params.id}, function(err, a) {
+        if(err || !a)
+            return res.status(400).send({error: "Could Not Find"});
+        return res.status(200).json(a);
+    });
+};
+
+module.exports.template.findAppointments = function(req, res) {
+    Appointment.find({company_id: req.params.id, first_name: req.params.firstName, last_name: req.params.lastName}, function(err, a) {
+        if(err || !a)
+            return res.status(400).send({error: "Could not find appointments matching your name and company information."});
         return res.status(200).json(a);
     });
 };
