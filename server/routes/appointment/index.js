@@ -9,6 +9,7 @@ router.post('/', 			controller.template.create);
 router.get('/:id', 			controller.template.get);
 router.get('/stats/:id', 	controller.template.getStats);
 router.get('/company/:id', 	controller.template.getAll);
+router.get('/company/history/:id', 	controller.template.getHistory);
 router.get('/company/today/:id', 	controller.template.getToday);
 router.get('/all/:id', 							controller.template.getAllAppointments);
 router.get('/lookup/:id', 						controller.template.lookupProviderName);
