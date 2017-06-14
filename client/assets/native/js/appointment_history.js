@@ -67,7 +67,7 @@ $(document).ready(function(){
       type: 'GET',
       data: $('#response').serialize(),
       async: false,
-      url: '/api/appointments/company/' + myCompanyId,
+      url: '/api/appointments/company/history/' + myCompanyId,
       success: function(response) {
         json = response;
         console.log(response);
