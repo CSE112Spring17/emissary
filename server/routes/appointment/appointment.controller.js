@@ -67,6 +67,18 @@ module.exports.template.getAll = function(req, res) {
     });
 };
 
+module.exports.template.getHistory = function(req, res) {
+  var query =
+  {
+    company_id: req.params.id,
+    status: {$exists: true}
+  };
+  Appointment.find(query).sort([['date', 'descending']]).exec(function (err,result){
+    if(err) return res.status(400).json({error: "Could Not Save"});
+    return res.status(200).json(result);
+  });
+};
+
 module.exports.template.getToday = function(req, res) {
   var start = new Date();
   start.setHours(0, 0, 0, 0);
