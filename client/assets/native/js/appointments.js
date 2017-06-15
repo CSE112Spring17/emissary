@@ -147,6 +147,7 @@ $(document).ready(function(){
 
   function formatDate(date){
     var d = new Date(Date.parse(date));
+    d.setDate(d.getDate() + 1);
     var mm = d.getMonth() + 1;
     var yyyy = d.getFullYear();
     var dd = d.getDate();
