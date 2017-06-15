@@ -6,37 +6,6 @@ var config = require('../config/config');
 var ConfigureAuth = require('./ConfigureAuth');
 
 
-// Test data
-var templateForm = {
-  "form_id": 1,
-  "form_name": "My Form",
-  "form_fields": [
-    {
-      "field_id": 1,
-      "field_title": "Name",
-      "field_type": "textfield",
-      "field_value": "",
-      "field_required": true,
-      "field_disabled": false
-    },
-    {
-      "field_id": 3,
-      "field_title": "Email",
-      "field_type": "email",
-      "field_value": "",
-      "field_required": true,
-      "field_disabled": false
-    },
-    {
-      "field_id": 4,
-      "field_title": "Are you sick",
-      "field_type": "checkbox",
-      "field_value": "",
-      "field_required": true,
-      "field_disabled": false
-    }
-  ]
-};
 var submittedForm = {
   "form_id": "1",
   "form_name": "My Test Form",
@@ -164,10 +133,78 @@ describe("Forms", function() {
     var url = "localhost:" + config.port;
 
     var credentials;
-
+    var templateForm;
+    var sampleformat = '[\
+            {\
+              "type": "tel", \
+              "required": true,\
+              "label": "Phone Number",\
+              "name": "text-1496706929086"\
+            },\
+            {\
+              "type": "email",\
+              "required": true,\
+              "label": "Email",\
+              "name": "text-1496706930024"\
+            },\
+            {\
+              "type": "text",\
+              "label": "Text Field",\
+              "name": "text-1496706931586",\
+              "required":false\
+            },\
+            {\
+              "type": "date",\
+              "label": "Date Field",\
+              "name": "date-1496707034748",\
+              "required":false\
+            },\
+            {\
+              "type": "number",\
+              "label": "Number",\
+              "name": "number-1496707035941",\
+               "required":false\
+            }\
+          ]';
     before(function(done) {
       ConfigureAuth.setupAdmin(function(cred) {
         credentials = cred;
+        templateForm = {
+          company_id: credentials.admin._id,
+          name: "TestForm",
+          format: '[\
+            {\
+              "type": "text", \
+              "subtype": "tel",\
+              "required": true,\
+              "label": "Phone Number",\
+              "name": "text-1496706929086"\
+            },\
+            {\
+              "type": "text",\
+              "subtype": "email",\
+              "required": true,\
+              "label": "Email",\
+              "name": "text-1496706930024"\
+            },\
+            {\
+              "type": "text",\
+              "label": "Text Field",\
+              "name": "text-1496706931586",\
+              "subtype": "text"\
+            },\
+            {\
+              "type": "date",\
+              "label": "Date Field",\
+              "name": "date-1496707034748"\
+            },\
+            {\
+              "type": "number",\
+              "label": "Number",\
+              "name": "number-1496707035941"\
+            }\
+          ]'
+        };
         done();
       });
     });
@@ -175,61 +212,62 @@ describe("Forms", function() {
 
     /********** TEMPLATE TESTING **********/
 
-    // var templateFormId = null;
-    // describe("Form Templates", function() {
-    //   describe('POST /api/form/template', function(){
-    //     it('should save the template', function(done){
-    //       request(url)
-    //         .post('/api/form/template')
-    //         .query({email: credentials.email, token: credentials.token, isAdmin:true})
-    //         .expect(200)
-    //         .send({
-    //           _admin_id: credentials.admin._id,
-    //           template: templateForm,
-    //         })
-    //         .end(function(err, res){
-    //           templateFormId = res.body._id;
-    //           res.body.should.have.property('_admin_id').and.be.equal(''+credentials.admin._id);
-    //           res.body.should.have.property('template').and.be.instanceof(Object);
-    //           done();
-    //         });
-    //     });
-    //   });
-    //
-    //   describe('GET /api/form/template/company/:id', function(){
-    //     it('Should respond with company template data', function(done){
-    //       request(url)
-    //         .get('/api/form/template/company/' + credentials.admin._id)
-    //         .query({email: credentials.email, token: credentials.token, isAdmin:true})
-    //         .end(function(err, res){
-    //           res.body.should.have.property('_id');
-    //           res.body.should.have.property('_admin_id');
-    //           res.body.should.have.property('template').and.be.instanceof(Object);
-    //
-    //           res.body.template.should.deep.equal(templateForm);
-    //           res.body._id.should.equal(templateFormId);
-    //           done();
-    //         });
-    //     });
-    //   });
-    //
-    //   describe('DELETE /api/form/template/:template_id', function(){
-    //     it('Should delete the template data', function(done){
-    //       request(url)
-    //         .delete('/api/form/template/' + templateFormId)
-    //         .query({email: credentials.email, token: credentials.token, isAdmin:true})
-    //         .end(function(err, res){
-    //           res.body.should.have.property('_id');
-    //           res.body.should.have.property('_admin_id');
-    //           res.body.should.have.property('template').and.be.instanceof(Object);
-    //
-    //           res.body.template.should.deep.equal(templateForm);
-    //           res.body._id.should.equal(templateFormId);
-    //           done();
-    //         });
-    //     });
-    //   });
-    // });
+    var templateFormId = null;
+    describe("Form Templates", function() {
+      describe('POST /api/form/template', function(){
+        it('should save the template', function(done){
+          request(url)
+            .post('/api/form/template')
+            .query({email: credentials.email, token: credentials.token, isAdmin:true})
+            .expect(200)
+            .send(templateForm)
+            .end(function(err, res){
+              if (err) throw(err);
+              res.body.should.have.property('_id');
+              templateFormId = res.body._id;
+              res.body.should.have.property('company_id').and.be.equal(String(credentials.admin._id));
+              res.body.should.have.property('format').and.be.instanceof(Object);
+              done();
+            });
+        });
+      });
+    
+      describe('GET /api/form/template/company/:id', function(){
+        it('Should respond with company template data', function(done){
+          request(url)
+            .get('/api/form/template/company/' + credentials.admin._id)
+            .query({email: credentials.email, token: credentials.token, isAdmin:true})
+            .end(function(err, res){
+              res.body[0].should.have.property('company_id').and.be.equal(String(credentials.admin._id));
+              res.body[0].should.have.property('format').and.be.instanceof(Object);
+    
+              res.body[0].format.should.deep.equal(JSON.parse(sampleformat));
+              res.body[0].should.have.property('_id');
+              res.body[0]._id.should.equal(templateFormId);
+              done();
+            });
+        });
+      });
+    
+      describe('DELETE /api/form/template/:template_id', function(){
+        it('Should delete the template data', function(done){
+          request(url)
+            .delete('/api/form/template/' + templateFormId)
+            .query({email: credentials.email, token: credentials.token, isAdmin:true})
+            .end(function(err, res){
+              
+              res.body.should.have.property('company_id').and.be.equal(String(credentials.admin._id));
+              res.body.should.have.property('name').and.be.equal("TestForm");
+              res.body.should.have.property('format').and.be.instanceof(Object);
+    
+              res.body.format.should.deep.equal(JSON.parse(sampleformat));
+              res.body.should.have.property('_id');
+              res.body._id.should.equal(templateFormId);
+              done();
+            });
+        });
+      });
+    });
 
 
 
@@ -250,8 +288,7 @@ describe("Forms", function() {
               patientEmail: "jcruise@tomcruise.com",
             })
             .end(function(err, res){
-              //console.log(err);
-              //console.log(res);
+              
               res.body.should.have.property('form').and.be.instanceof(Object);
               res.body.should.have.property('_admin_id').and.be.equal(''+credentials.admin._id);
               submittedFormId = res.body._id;

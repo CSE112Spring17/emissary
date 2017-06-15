@@ -131,7 +131,7 @@ module.exports.template.findAppointments = function(req, res) {
 };
 
 module.exports.template.update = function(req, res){
-    console.log("INSIDE UPDATE",req);
+    
     Appointment.findOne({_id: req.params.id}, function (err, a) {
         if(err || !a)
             return res.status(401).json({error: "Could Not Find"});

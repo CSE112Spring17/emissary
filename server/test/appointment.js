@@ -1,6 +1,3 @@
-/**
- * Created by kevingu on 2/21/16.
- */
 var request = require('supertest');
 var config = require('../config/config');
 var Appointment = require('../models/Appointment');
@@ -16,7 +13,7 @@ describe('Appointment Test', function() {
     var first_name = "test";
     var last_name = "test";
     var phone_number="1234567890";
-    var date="2016-04-23T18:25:43.511Z";
+    var date=String(new Date());
     var provider_name = "test test";
 
     //new appointment info
@@ -37,7 +34,7 @@ describe('Appointment Test', function() {
 
 
     before(function(done) {
-      this.timeout(8000);
+      this.timeout(10000);
       //setup company
         var company = new Company();
         company.email = email;
@@ -107,12 +104,23 @@ describe('Appointment Test', function() {
             .get('/api/appointments/'+0)
             .expect(400)
             .end(function(err,res){
-                console.log(res.body);
                 res.body.should.have.property('error');
                 done();
             });
     });
 
+    it('should properly fetch all contents', function(done){
+        request(url)
+            .get('/api/appointments/company/' + currCompany._id)
+            .expect(200)
+            .end(function(err,res){
+                if (err) throw (err);
+                res.body[0].should.have.property('company_id').and.be.equal(String(currCompany._id));
+                res.body[0].should.have.property('phone_number').and.be.equal(String(currCompany.phone_number));
+                res.body[0].should.have.property('first_name').and.be.equal(String(first_name));
+                done();
+            });
+    });
 
     it("should get all appointments", function(done) {
         request(url)
@@ -120,6 +128,51 @@ describe('Appointment Test', function() {
             .expect(200)
             .end(function(err,res){
                 res.body.should.be.an.instanceof(Array);
+                res.body[0].should.have.property('company_id').and.be.equal(String(currCompany._id));
+                res.body[0].should.have.property('first_name').and.be.equal(String(first_name));
+                res.body[0].should.have.property('last_name').and.be.equal(String(last_name));
+                res.body[0].should.have.property('phone_number').and.be.equal(String(phone_number));
+
+                res.body[1].should.have.property('company_id').and.be.equal(String(currCompany._id));
+                res.body[1].should.have.property('first_name').and.be.equal(String(new_first_name));
+                res.body[1].should.have.property('last_name').and.be.equal(String(new_last_name));
+                res.body[1].should.have.property('phone_number').and.be.equal(String(new_phone_number));
+                done();
+            });
+    });
+
+    it("should get today's appointments", function(done){
+        request(url)
+            .get('/api/appointments/company/today/'+currCompany._id)
+            .expect(200)
+            .end(function(err,res){
+                res.body.should.be.an.instanceof(Array);
+                res.body[0].should.have.property('company_id').and.be.equal(String(currCompany._id));
+                res.body[0].should.have.property('first_name').and.be.equal(String(first_name));
+                res.body[0].should.have.property('last_name').and.be.equal(String(last_name));
+                res.body[0].should.have.property('date');
+
+                var datestr =  date;
+                datestr = datestr.substring(4,15);
+                var datelist = datestr.split(" ");
+
+                var resdatestr = res.body[0].date;
+                resdatestr = resdatestr.substring(0,10);
+                var resdatelist = resdatestr.split("-");
+                
+                datelist[1].should.equal(resdatelist[2]);
+                datelist[2].should.equal(resdatelist[0]);
+                done();
+            });
+    });
+
+    it('testing appointment no shows', function(done){
+        request(url)
+            .get('/api/appointments/company/' + currCompany._id)
+            .expect(200)
+            .end(function(err,res){
+                if (err) throw (err);
+                res.body[0].should.not.have.property('status');
                 done();
             });
     });
@@ -150,6 +203,22 @@ describe('Appointment Test', function() {
                 res.body.date.should.equal(new_date);
                 res.body.should.have.property('provider_name');
                 res.body.provider_name.should.equal(new_provider_name);
+                done();
+            });
+    });
+
+    it("should cancel the appointment", function(done){
+        request(url)
+            .post('/api/appointments/cancelled')
+            .send(
+                {
+                    id : currAppointment._id
+                }
+            )
+            .expect(200)
+            .end(function(err,res){
+                if (err) throw(err);
+                res.body.should.have.property('status').and.be.equal("Cancelled");
                 done();
             });
     });

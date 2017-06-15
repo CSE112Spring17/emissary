@@ -120,7 +120,6 @@ module.exports.template.create =  function(req, res) {
     return;
   }
 
-  
   var format = JSON.parse(req.body.format); //request body
   var to_store = [format.length]; //will store the object
   //set up the format for storing
@@ -128,6 +127,7 @@ module.exports.template.create =  function(req, res) {
     res.status(400).json({error: "You must have at least one element in your format."});
     return;
   }
+  
   for (var i=0; i<format.length; i++) {
     var required_val;
     var label_val;
@@ -164,7 +164,7 @@ module.exports.template.create =  function(req, res) {
       name: name_val
     }
   }
-
+ 
   //set up full object for storing
   var storing_object = {
     company_id : new ObjectId(req.body.company_id),
@@ -172,7 +172,6 @@ module.exports.template.create =  function(req, res) {
     format: to_store
   }
 
-  console.log(storing_object);
   
    var newTemplate = new TemplateForm();
    newTemplate.company_id = new mongoose.Types.ObjectId(storing_object.company_id);

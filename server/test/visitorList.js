@@ -89,7 +89,7 @@ describe("VisitorList", function() {
             appointment1.company_id = c._id;
             appointment1.provider_name = first_appointment_info.provider_name;
             appointment1.save(function(err, a1){
-                console.log(err);
+       
                 if(err) throw(err);
                 appointment1=a1;
                 appointment2 = new Appointment();
@@ -193,7 +193,7 @@ describe("VisitorList", function() {
             .send()
             .expect(404)
             .end(function(err, res){
-                console.log(res.body);
+              
                 res.body.should.have.property('error');
                 done();
             });

@@ -22,6 +22,7 @@ describe('Company Test', function() {
 
 
     before(function(done) {
+        
         request(url)
             .post('/api/companies')
             .send({
@@ -29,13 +30,15 @@ describe('Company Test', function() {
                 name:name,
                 phone_number:phone_number
             })
-            .expect(200)
             .end(function(err,res){
-                if(err)
+                if (err){
                     throw(err);
-                res.body.should.have.property('_id');
-                currCompany=res.body;
-                done();
+                }else{
+                    res.body.should.have.property('_id');
+                    currCompany=res.body;
+                    done();
+                }
+               
             });
     });
 
@@ -72,7 +75,6 @@ describe('Company Test', function() {
             .get('/api/companies/'+0)
             .expect(400)
             .end(function(err,res){
-                console.log(res.body);
                 res.body.should.have.property('error');
                 done();
             });
@@ -126,7 +128,7 @@ describe('Company Test', function() {
                 });
             });
     });
-
+    
     after(function(done) {
         done();
     });
