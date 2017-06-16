@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites errors="2"
+            failures="1"
+            tests="1">
+
+  <testsuite name="e2e"
+    errors="2" failures="1" hostname="" id="" package="e2e" skipped="0"
+    tests="1" time="4.622" timestamp="Sat, 20 May 2017 23:15:51 GMT">
+  
+    <testcase name="E2E Emissary Testing" classname="e2e" time="4.622" assertions="2">
+
+      <failure message="Testing if element &lt;input[name=email]&gt; is visible. Element could not be located.">    at Object.module.exports.E2E Emissary Testing (/Users/amirhajimirsadeghi/CSE112/emissary/test/e2e/e2e.js:10:12)</failure>
+<system-out>[[ATTACHMENT|/Users/amirhajimirsadeghi/CSE112/emissary/screenshots/e2e/E2E-Emissary-Testing_ERROR_May-20-2017-161555-GMT-0700.png]]</system-out>
+    
+    </testcase>
+      <system-err>
+        ERROR: Unable to locate element: &quot;&quot; using: xpath
+    at Object.module.exports.E2E Emissary Testing (/Users/amirhajimirsadeghi/CSE112/emissary/test/e2e/e2e.js:7:5)
+    at Module.call (/Users/amirhajimirsadeghi/CSE112/emissary/node_modules/nightwatch/lib/runner/module.js:62:34)
+    at suite.beforeEach.then.then.then.time (/Users/amirhajimirsadeghi/CSE112/emissary/node_modules/nightwatch/lib/runner/testcase.js:70:29)
+    at _fulfilled (/Users/amirhajimirsadeghi/CSE112/emissary/node_modules/nightwatch/node_modules/q/q.js:834:54)
+    at self.promiseDispatch.done (/Users/amirhajimirsadeghi/CSE112/emissary/node_modules/nightwatch/node_modules/q/q.js:863:30)
+    at Promise.promise.promiseDispatch (/Users/amirhajimirsadeghi/CSE112/emissary/node_modules/nightwatch/node_modules/q/q.js:796:13)
+    at /Users/amirhajimirsadeghi/CSE112/emissary/node_modules/nightwatch/node_modules/q/q.js:556:49
+    at runSingle (/Users/amirhajimirsadeghi/CSE112/emissary/node_modules/nightwatch/node_modules/q/q.js:137:13)
+    at flush (/Users/amirhajimirsadeghi/CSE112/emissary/node_modules/nightwatch/node_modules/q/q.js:125:13)
+    at process._tickCallback (node.js:458:13)
+ERROR: Unable to locate element: &quot;input[name=email]&quot; using: css selector
+    at command (/Users/amirhajimirsadeghi/CSE112/emissary/node_modules/nightwatch/lib/api/assertions/visible.js:42:21)
+    at module.exports.BaseAssertion._scheduleAssertion (/Users/amirhajimirsadeghi/CSE112/emissary/node_modules/nightwatch/lib/core/assertion.js:87:17)
+    at module.exports.BaseAssertion._executeCommand (/Users/amirhajimirsadeghi/CSE112/emissary/node_modules/nightwatch/lib/core/assertion.js:82:17)
+    at AssertionInstance.commandFn [as _commandFn] (/Users/amirhajimirsadeghi/CSE112/emissary/node_modules/nightwatch/lib/core/assertion.js:180:21)
+    at AsyncTree.runCommand (/Users/amirhajimirsadeghi/CSE112/emissary/node_modules/nightwatch/lib/core/queue.js:154:30)
+    at AsyncTree.runChildNode (/Users/amirhajimirsadeghi/CSE112/emissary/node_modules/nightwatch/lib/core/queue.js:114:8)
+    at AsyncTree.walkDown (/Users/amirhajimirsadeghi/CSE112/emissary/node_modules/nightwatch/lib/core/queue.js:80:10)
+    at AsyncTree.walkUp (/Users/amirhajimirsadeghi/CSE112/emissary/node_modules/nightwatch/lib/core/queue.js:97:8)
+    at AsyncTree.walkDown (/Users/amirhajimirsadeghi/CSE112/emissary/node_modules/nightwatch/lib/core/queue.js:90:12)
+    at AsyncTree.traverse (/Users/amirhajimirsadeghi/CSE112/emissary/node_modules/nightwatch/lib/core/queue.js:73:8)
+      </system-err>
+  
+  
+  </testsuite>
+</testsuites>

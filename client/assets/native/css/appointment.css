@@ -1,0 +1,182 @@
+#company-name > h1 {
+    font-size: 18px;
+}
+
+hr{
+   border-top: 3px solid #01b2bd !important;
+}
+.delete-appt{
+   margin-left: 15px;
+}
+.delete-appt:hover{
+  color: red;
+  cursor:pointer;
+}
+.appt-container{
+  max-width: 980px;
+  border: 2px solid black;
+  border-top-right-radius: 30px;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+  padding: 30px 30px 60px;
+}
+
+.page-title{
+   margin: 35px auto;
+}
+
+.table {
+  margin-bottom: 50px;
+}
+
+.table > thead > tr > th {
+   /*border-bottom: none !important;*/
+}
+
+.add-button{
+   float: left;
+   border-radius: 2px;
+   padding: 7px;
+   background-color: #01b2bd;
+   color: white;
+}
+
+.add-button:hover{
+   background-color: #049099;
+   cursor: pointer;
+}
+
+tr:nth-last-child(1){
+   border-bottom: 1px solid rgb(215,215,215) !important;
+}
+
+.table thead th{
+    border-bottom: 1px solid rgb(215,215,215) !important;
+}
+
+.message-api{
+   margin-top: 30px;
+   color: #303641;
+   margin-left: 30px;
+   width: 60%;
+   max-width: 480px;
+
+}
+
+.message-api a{
+   color: #818da2 !important;
+}
+
+.message-api a:hover{
+   color: #5b677b !important;
+}
+
+.alert {
+    padding: 20px;
+    background-color: #4CAF50;
+    color: white;
+}
+
+.closebtn {
+    margin-left: 15px;
+    color: white;
+    font-weight: bold;
+    float: right;
+    font-size: 22px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: opacity 0.6s;
+}
+
+.closebtn:hover {
+    color: black;
+}
+
+/* The Modal (background) */
+.confirmation {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.confirmation-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 40%; /* Could be more or less, depending on screen size */
+    height: 10%;
+}
+
+/* The Close Button */
+.confirmation-close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.confirmation-close:hover,
+.confirmation-close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.button-yes {
+  float: right;
+  background: rgb(26, 188, 156);
+  border-color: rgb(26, 188, 156);
+
+}
+
+.button-no {
+  float: right;
+  background: rgb(216, 73, 90);
+  border-color: rgb(216, 73, 90);
+}
+
+#appt-navbar {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: inherit;;
+}
+
+.appt-navbar_li {
+  float: left;
+}
+
+.appt-navbar_a {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  display: block;
+  width: 100px;
+  height: 50px;
+  font-size: 16px;
+  color: #AAABAE;
+  background-color: #373E4A;
+  text-align: center;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  padding: 14px 0;
+  text-decoration: none;
+}
+
+.appt-navbar_a:hover,
+.appt-navbar_active {
+  font-weight: bold;
+  color: #FFFFFF;
+  background-color: #303641;
+  border: 1px solid #454A54;
+}
